@@ -1,0 +1,232 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Chunkr
+providerId: chunkr-ai
+created: '2026-06-20'
+modified: '2026-06-20'
+reconciled: true
+tags:
+- Document Parsing
+- OCR
+- Chunking
+- RAG
+- Document Intelligence
+- Plans
+description: >-
+  Chunkr Cloud uses tiered monthly subscription plans that bundle a credit
+  allowance and an included-page allowance, with usage billed per page (roughly
+  one credit per page) and a declining per-page rate as the tier rises. A Free
+  tier covers light evaluation. Higher-volume and regulated workloads move to an
+  Enterprise plan with on-prem / VPC deployment. The platform is also available
+  as an AGPL-3.0 open-source release (lumina-ai-inc/chunkr) that can be
+  self-hosted at no license cost, though the open-source build uses community
+  models rather than the proprietary Cloud models.
+notes: >-
+  Representative tier amounts as published on the Chunkr pricing page; verify
+  current credit allowances, included pages, and per-page rates at
+  chunkr.ai/pricing during reconciliation, as these change over time.
+sources:
+- https://chunkr.ai/pricing
+- https://docs.chunkr.ai/pages/get-started/welcome
+- https://github.com/lumina-ai-inc/chunkr
+plans:
+- id: chunkr-free
+  name: Free
+  type: free
+  description: >-
+    No-cost evaluation tier with a small monthly credit and page allowance and
+    no payment information required.
+  entries:
+  - label: Included Pages
+    name: free_pages
+    type: free
+    metric: pages
+    limit: 200
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $0.00
+    userMultiplied: false
+  - label: Monthly Credits
+    name: free_credits
+    type: free
+    metric: credits
+    limit: 100
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $0.00
+    userMultiplied: false
+  elements:
+  - name: Parse Tasks
+  - name: Extract Tasks
+  - name: Files
+- id: chunkr-starter
+  name: Starter
+  type: subscription
+  description: >-
+    Entry paid tier bundling credits and included pages with per-page overage.
+  entries:
+  - label: Monthly Subscription
+    name: starter_subscription
+    type: flat
+    metric: subscription
+    limit: 1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $50 per month
+    userMultiplied: false
+  - label: Included Pages
+    name: starter_pages
+    type: included
+    metric: pages
+    limit: 5000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  - label: Page Overage
+    name: starter_overage
+    type: usage
+    metric: pages
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $0.01 per page
+    userMultiplied: false
+  elements:
+  - name: Parse Tasks
+  - name: Extract Tasks
+  - name: Files
+- id: chunkr-dev
+  name: Dev
+  type: subscription
+  description: >-
+    Mid tier with a larger page allowance and a lower per-page rate.
+  entries:
+  - label: Monthly Subscription
+    name: dev_subscription
+    type: flat
+    metric: subscription
+    limit: 1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $200 per month
+    userMultiplied: false
+  - label: Included Pages
+    name: dev_pages
+    type: included
+    metric: pages
+    limit: 25000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  - label: Page Overage
+    name: dev_overage
+    type: usage
+    metric: pages
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $0.008 per page
+    userMultiplied: false
+  elements:
+  - name: Parse Tasks
+  - name: Extract Tasks
+  - name: Files
+- id: chunkr-growth
+  name: Growth
+  type: subscription
+  description: >-
+    High-volume tier with the largest included page allowance and lowest
+    published per-page rate.
+  entries:
+  - label: Monthly Subscription
+    name: growth_subscription
+    type: flat
+    metric: subscription
+    limit: 1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $500 per month
+    userMultiplied: false
+  - label: Included Pages
+    name: growth_pages
+    type: included
+    metric: pages
+    limit: 100000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  - label: Page Overage
+    name: growth_overage
+    type: usage
+    metric: pages
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $0.005 per page
+    userMultiplied: false
+  elements:
+  - name: Parse Tasks
+  - name: Extract Tasks
+  - name: Files
+- id: chunkr-enterprise
+  name: Enterprise
+  type: enterprise
+  description: >-
+    Volume commitments, on-prem / VPC deployments for high-security and
+    regulated industries, dedicated support, and negotiated terms. Contact
+    Chunkr sales.
+  entries:
+  - label: Enterprise Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: On-Prem / VPC Deployment
+  - name: Custom Volume Pricing
+  - name: Dedicated Support
+- id: chunkr-self-hosted
+  name: Self-Hosted (Open Source)
+  type: free
+  description: >-
+    The AGPL-3.0 open-source release (lumina-ai-inc/chunkr) can be self-hosted
+    via Docker Compose at no license cost. Uses community/open-source models
+    rather than the proprietary Cloud models; a commercial license is available
+    for use outside AGPL terms.
+  entries:
+  - label: Open Source License
+    name: self_hosted
+    type: free
+    metric: license
+    limit: -1
+    timeFrame: perpetual
+    geo: global
+    unit: 1
+    price: $0.00 (AGPL-3.0); infrastructure costs apply
+    userMultiplied: false
+  elements:
+  - name: Self-Hosted Parse and Extract
+  - name: Community Models
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

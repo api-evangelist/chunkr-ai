@@ -1,0 +1,230 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Chunkr API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "Authorization",
+      "value": "{{apiKey}}",
+      "in": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Tasks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create a parse task.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.chunkr.ai/tasks/parse",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"file\": \"https://example.com/document.pdf\",\n  \"chunk_processing\": { \"target_length\": 4096, \"tokenizer\": \"Word\" },\n  \"ocr_strategy\": \"All\",\n  \"segmentation_strategy\": \"LayoutAnalysis\",\n  \"error_handling\": \"Fail\"\n}"
+            }
+          },
+          "docs": "Runs layout analysis, OCR, segmentation, and chunking over a document."
+        },
+        {
+          "info": {
+            "name": "Create an extract task.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.chunkr.ai/tasks/extract",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"file\": \"https://example.com/invoice.pdf\",\n  \"schema\": { \"invoice_number\": \"string\", \"total\": \"number\" }\n}"
+            }
+          },
+          "docs": "Pulls schema-driven structured data from a document."
+        },
+        {
+          "info": {
+            "name": "List tasks.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/tasks?page=1&limit=10"
+          },
+          "docs": "Returns a paginated list of tasks."
+        },
+        {
+          "info": {
+            "name": "Get a task.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/tasks/{{task_id}}?include_chunks=true"
+          },
+          "docs": "Retrieves a parse or extract task by id, including output when completed."
+        },
+        {
+          "info": {
+            "name": "Get a parse task.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/tasks/{{task_id}}/parse"
+          },
+          "docs": "Retrieves the parse-specific output for a task."
+        },
+        {
+          "info": {
+            "name": "Get an extract task.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/tasks/{{task_id}}/extract"
+          },
+          "docs": "Retrieves the extract-specific output for a task."
+        },
+        {
+          "info": {
+            "name": "Cancel a task.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.chunkr.ai/tasks/{{task_id}}/cancel"
+          },
+          "docs": "Cancels a task that is queued or processing."
+        },
+        {
+          "info": {
+            "name": "Delete a task.",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.chunkr.ai/tasks/{{task_id}}"
+          },
+          "docs": "Deletes a task and its associated artifacts."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Files",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Upload a file.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.chunkr.ai/files",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            }
+          },
+          "docs": "Uploads a file that can be referenced from a parse or extract task."
+        },
+        {
+          "info": {
+            "name": "List files.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/files"
+          },
+          "docs": "Returns a paginated list of uploaded files."
+        },
+        {
+          "info": {
+            "name": "Get a file.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/files/{{file_id}}"
+          },
+          "docs": "Retrieves a file record."
+        },
+        {
+          "info": {
+            "name": "Download file content.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/files/{{file_id}}/download"
+          },
+          "docs": "Downloads the raw file content."
+        },
+        {
+          "info": {
+            "name": "Get a file URL.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/files/{{file_id}}/url"
+          },
+          "docs": "Returns a presigned URL for the stored file."
+        },
+        {
+          "info": {
+            "name": "Delete a file.",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.chunkr.ai/files/{{file_id}}"
+          },
+          "docs": "Deletes a file."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Health",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Health check.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/health"
+          },
+          "docs": "Liveness check for the Chunkr API."
+        },
+        {
+          "info": {
+            "name": "Get all supported file types.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/extras/supported-file-types"
+          },
+          "docs": "Lists the file types accepted by the parsing and extraction pipelines."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

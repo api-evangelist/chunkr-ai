@@ -1,0 +1,177 @@
+{
+  "info": {
+    "name": "Chunkr API",
+    "description": "Chunkr Cloud API for document parsing, OCR, layout analysis, segmentation, chunking, and schema-driven extraction. Parse and extract are asynchronous task jobs that are created and then polled. Authentication uses an API key sent in the Authorization header.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key", "value": "Authorization", "type": "string" },
+      { "key": "value", "value": "{{API_KEY}}", "type": "string" },
+      { "key": "in", "value": "header", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://api.chunkr.ai" },
+    { "key": "API_KEY", "value": "" },
+    { "key": "task_id", "value": "" },
+    { "key": "file_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "Create Parse Task",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/tasks/parse", "host": ["{{baseUrl}}"], "path": ["tasks", "parse"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"file\": \"https://example.com/document.pdf\",\n  \"chunk_processing\": { \"target_length\": 4096, \"tokenizer\": \"Word\" },\n  \"ocr_strategy\": \"All\",\n  \"segmentation_strategy\": \"LayoutAnalysis\",\n  \"error_handling\": \"Fail\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Extract Task",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/tasks/extract", "host": ["{{baseUrl}}"], "path": ["tasks", "extract"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"file\": \"https://example.com/invoice.pdf\",\n  \"schema\": { \"invoice_number\": \"string\", \"total\": \"number\" }\n}"
+            }
+          }
+        },
+        {
+          "name": "List Tasks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/tasks?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["tasks"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Task",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/tasks/{{task_id}}?include_chunks=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["tasks", "{{task_id}}"],
+              "query": [{ "key": "include_chunks", "value": "true" }]
+            }
+          }
+        },
+        {
+          "name": "Get Parse Task",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/tasks/{{task_id}}/parse", "host": ["{{baseUrl}}"], "path": ["tasks", "{{task_id}}", "parse"] }
+          }
+        },
+        {
+          "name": "Get Extract Task",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/tasks/{{task_id}}/extract", "host": ["{{baseUrl}}"], "path": ["tasks", "{{task_id}}", "extract"] }
+          }
+        },
+        {
+          "name": "Cancel Task",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/tasks/{{task_id}}/cancel", "host": ["{{baseUrl}}"], "path": ["tasks", "{{task_id}}", "cancel"] }
+          }
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/tasks/{{task_id}}", "host": ["{{baseUrl}}"], "path": ["tasks", "{{task_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Files",
+      "item": [
+        {
+          "name": "Upload a File",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/files", "host": ["{{baseUrl}}"], "path": ["files"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "src": [] }]
+            }
+          }
+        },
+        {
+          "name": "List Files",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/files", "host": ["{{baseUrl}}"], "path": ["files"] }
+          }
+        },
+        {
+          "name": "Get File",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/files/{{file_id}}", "host": ["{{baseUrl}}"], "path": ["files", "{{file_id}}"] }
+          }
+        },
+        {
+          "name": "Download File Content",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/files/{{file_id}}/download", "host": ["{{baseUrl}}"], "path": ["files", "{{file_id}}", "download"] }
+          }
+        },
+        {
+          "name": "Get File URL",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/files/{{file_id}}/url", "host": ["{{baseUrl}}"], "path": ["files", "{{file_id}}", "url"] }
+          }
+        },
+        {
+          "name": "Delete File",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/files/{{file_id}}", "host": ["{{baseUrl}}"], "path": ["files", "{{file_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+          }
+        },
+        {
+          "name": "Get Supported File Types",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/extras/supported-file-types", "host": ["{{baseUrl}}"], "path": ["extras", "supported-file-types"] }
+          }
+        }
+      ]
+    }
+  ]
+}

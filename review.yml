@@ -1,0 +1,78 @@
+aid: chunkr-ai
+name: Chunkr
+review:
+  question: Does Chunkr expose a documented public WebSocket or streaming (SSE) API?
+  answer: false
+  date: '2026-06-20'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was created. Chunkr's parse and extract APIs are
+    asynchronous job APIs: a task is submitted over REST (POST /tasks/parse or
+    POST /tasks/extract) and the client polls GET /tasks/{task_id} until the
+    status reaches a terminal value. This is request/response polling, not an
+    event-driven streaming surface. No WebSocket and no documented Server-Sent
+    Events (SSE) stream were found, so there is no in-scope asynchronous
+    protocol to model.
+findings:
+  summary: |
+    Chunkr does not publish a documented public WebSocket or SSE API. The
+    Chunkr Cloud platform exposes only REST (HTTPS) endpoints under
+    https://api.chunkr.ai. Document processing is asynchronous via a task
+    model - create a parse or extract task, then poll the task by id until it
+    is Succeeded, Failed, or Cancelled. Authentication is an API key sent in
+    the Authorization header. The platform is also available as an AGPL-3.0
+    open-source release (lumina-ai-inc/chunkr) that self-hosts the same REST
+    surface, by default at http(s)://localhost:8000.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.chunkr.ai
+      documented: true
+    - protocol: SSE
+      scheme: https
+      documented: false
+      note: No Server-Sent Events stream is documented; task progress is obtained by polling GET /tasks/{task_id}.
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented in Chunkr's API reference as of the review date.
+  endpointsConfirmedRest:
+    - POST   https://api.chunkr.ai/tasks/parse
+    - POST   https://api.chunkr.ai/tasks/extract
+    - GET    https://api.chunkr.ai/tasks
+    - GET    https://api.chunkr.ai/tasks/{task_id}
+    - GET    https://api.chunkr.ai/tasks/{task_id}/parse
+    - GET    https://api.chunkr.ai/tasks/{task_id}/extract
+    - POST   https://api.chunkr.ai/tasks/{task_id}/cancel
+    - DELETE https://api.chunkr.ai/tasks/{task_id}
+    - POST   https://api.chunkr.ai/files
+    - GET    https://api.chunkr.ai/files
+    - GET    https://api.chunkr.ai/files/{file_id}
+    - GET    https://api.chunkr.ai/files/{file_id}/download
+    - GET    https://api.chunkr.ai/files/{file_id}/url
+    - DELETE https://api.chunkr.ai/files/{file_id}
+    - GET    https://api.chunkr.ai/health
+    - GET    https://api.chunkr.ai/extras/supported-file-types
+sources:
+  - url: https://docs.chunkr.ai/llms.txt
+    type: Documentation
+    note: Lists the full set of REST endpoints and the base URL https://api.chunkr.ai.
+  - url: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+    type: APIReference
+    note: POST /tasks/parse request/response; Authorization header (apiKey).
+  - url: https://docs.chunkr.ai/api-references/tasks/get-task
+    type: APIReference
+    note: GET /tasks/{task_id} polling with base64_urls and include_chunks query params.
+  - url: https://github.com/lumina-ai-inc/chunkr
+    type: SourceCode
+    note: AGPL-3.0 open-source release; self-hosted API at http(s)://localhost:8000.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket or documented SSE protocol surface exists. Chunkr's
+    asynchronous processing is delivered through REST task creation plus
+    polling, which is fully captured in the OpenAPI definition. No AsyncAPI
+    document was authored because there is no event-driven streaming transport
+    to model.

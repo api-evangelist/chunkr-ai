@@ -1,0 +1,66 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Chunkr
+providerId: chunkr-ai
+created: '2026-06-20'
+modified: '2026-06-20'
+reconciled: false
+tags:
+- Document Parsing
+- OCR
+- Chunking
+- RAG
+- Document Intelligence
+- Rate Limiting
+- Quotas
+- Throttling
+description: >-
+  Chunkr Cloud meters usage primarily through monthly credit and included-page
+  allowances per subscription tier rather than per-second request quotas;
+  exhausting the allowance moves a workload into per-page overage. Because
+  parse and extract are asynchronous task jobs that are submitted and then
+  polled, concurrency and queue limits apply per account and rise with tier.
+  Specific per-account request, concurrency, and queue values are not published
+  and are not reconciled in this artifact.
+notes: >-
+  Verify concurrent-task limits, submission throttles, and any documented
+  429 behavior in the Chunkr dashboard and docs during reconciliation; primary
+  governance is credit/page allowance per plan, which is captured in the Plans
+  artifact.
+sources:
+- https://docs.chunkr.ai/pages/get-started/welcome
+- https://chunkr.ai/pricing
+responseCodes:
+  throttled: 429
+limits:
+- name: Monthly Page Allowance
+  scope: account
+  metric: pages
+  limit: see plan tier
+  notes: Included pages per month per subscription tier; overage billed per page.
+- name: Monthly Credit Allowance
+  scope: account
+  metric: credits
+  limit: see plan tier
+  notes: Credits consumed per processed page (roughly one credit per page).
+- name: Concurrent Tasks
+  scope: account
+  metric: tasks
+  limit: see provider documentation
+  notes: Number of parse/extract tasks that can process concurrently; varies by tier.
+- name: Task Submission Rate
+  scope: account
+  metric: requests
+  limit: see provider documentation
+  notes: Submission throttling applies to POST /tasks/parse and /tasks/extract.
+policies:
+- name: Tiered Allowances
+  description: Page and credit allowances and concurrency raise as accounts move from Free to Starter, Dev, Growth, and Enterprise.
+- name: Polling Discipline
+  description: Tasks are asynchronous; clients should poll GET /tasks/{task_id} with backoff rather than tight loops.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and honor Retry-After on 429 responses.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

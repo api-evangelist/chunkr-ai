@@ -1,0 +1,152 @@
+aid: chunkr-ai
+url: https://raw.githubusercontent.com/api-evangelist/chunkr-ai/refs/heads/main/apis.yml
+name: Chunkr
+kind: company
+description: Chunkr is an open-source document intelligence platform that turns complex
+  documents (PDF, Office, images) into RAG- and LLM-ready data. The Chunkr Cloud API
+  at api.chunkr.ai performs layout analysis, OCR, segmentation, and chunking, and
+  runs proprietary in-house vision models; the AGPL-3.0 open-source release (lumina-ai-inc/chunkr)
+  can be self-hosted via Docker.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Document Parsing
+- OCR
+- Chunking
+- RAG
+- Document Intelligence
+created: '2026-06-20'
+modified: '2026-06-20'
+specificationVersion: '0.19'
+apis:
+- aid: chunkr-ai:chunkr-parse-task-api
+  name: Chunkr Parse Task API
+  tags:
+  - Parsing
+  - Layout Analysis
+  - Chunking
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+  baseURL: https://api.chunkr.ai
+  properties:
+  - url: https://docs.chunkr.ai/pages/get-started/welcome
+    type: Documentation
+  - url: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+    type: APIReference
+  - url: openapi/chunkr-ai-openapi.yml
+    type: OpenAPI
+  - url: collections/chunkr-ai.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chunkr-ai.opencollection.json
+    type: OpenCollection
+  description: Creates a parse task that runs layout analysis, OCR, segmentation, and
+    chunking over an uploaded document, returning structured chunks, pages, and segment
+    metadata with configurable chunk_processing, segment_processing, ocr_strategy,
+    and segmentation_strategy.
+- aid: chunkr-ai:chunkr-extract-task-api
+  name: Chunkr Extract Task API
+  tags:
+  - Extraction
+  - Structured Output
+  - Schema
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.chunkr.ai/api-references/tasks/create-extract-task
+  baseURL: https://api.chunkr.ai
+  properties:
+  - url: https://docs.chunkr.ai/api-references/tasks/create-extract-task
+    type: Documentation
+  - url: https://docs.chunkr.ai/api-references/tasks/create-extract-task
+    type: APIReference
+  - url: openapi/chunkr-ai-openapi.yml
+    type: OpenAPI
+  - url: collections/chunkr-ai.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chunkr-ai.opencollection.json
+    type: OpenCollection
+  description: Creates an extract task that pulls schema-driven structured data from
+    a document, returning JSON output with citations and metrics against a caller-supplied
+    extraction schema and optional system prompt.
+- aid: chunkr-ai:chunkr-task-management-api
+  name: Chunkr Task Management API
+  tags:
+  - Tasks
+  - Polling
+  - Lifecycle
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.chunkr.ai/api-references/tasks/get-task
+  baseURL: https://api.chunkr.ai
+  properties:
+  - url: https://docs.chunkr.ai/api-references/tasks/get-task
+    type: Documentation
+  - url: https://docs.chunkr.ai/api-references/tasks/get-task
+    type: APIReference
+  - url: openapi/chunkr-ai-openapi.yml
+    type: OpenAPI
+  - url: collections/chunkr-ai.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chunkr-ai.opencollection.json
+    type: OpenCollection
+  description: Retrieves, lists, cancels, and deletes parse and extract tasks - get
+    a task by id, get its parse or extract output, list tasks with pagination, cancel
+    a running task, and delete a task and its artifacts.
+- aid: chunkr-ai:chunkr-files-api
+  name: Chunkr Files API
+  tags:
+  - Files
+  - Upload
+  - Storage
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.chunkr.ai/api-references/files/upload-a-file
+  baseURL: https://api.chunkr.ai
+  properties:
+  - url: https://docs.chunkr.ai/api-references/files/upload-a-file
+    type: Documentation
+  - url: https://docs.chunkr.ai/api-references/files/upload-a-file
+    type: APIReference
+  - url: openapi/chunkr-ai-openapi.yml
+    type: OpenAPI
+  - url: collections/chunkr-ai.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chunkr-ai.opencollection.json
+    type: OpenCollection
+  description: Uploads, lists, retrieves, downloads, and deletes files that can be
+    referenced by parse and extract tasks via ch://files/{file_id} references.
+- aid: chunkr-ai:chunkr-health-api
+  name: Chunkr Health and Extras API
+  tags:
+  - Health
+  - Utility
+  - Metadata
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.chunkr.ai/api-references/health/health-check
+  baseURL: https://api.chunkr.ai
+  properties:
+  - url: https://docs.chunkr.ai/api-references/health/health-check
+    type: Documentation
+  - url: https://docs.chunkr.ai/api-references/health/health-check
+    type: APIReference
+  - url: openapi/chunkr-ai-openapi.yml
+    type: OpenAPI
+  - url: collections/chunkr-ai.postman_collection.json
+    type: PostmanCollection
+  - url: collections/chunkr-ai.opencollection.json
+    type: OpenCollection
+  description: Liveness health check and metadata helpers, including listing all supported
+    file types accepted by the parsing and extraction pipelines.
+common:
+- type: GitHubOrganization
+  url: https://github.com/lumina-ai-inc
+- type: LinkedIn
+  url: https://www.linkedin.com/company/chunkr
+- type: Website
+  url: https://chunkr.ai
+- type: Documentation
+  url: https://docs.chunkr.ai
+- type: Plans
+  url: plans/chunkr-ai-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/chunkr-ai-rate-limits.yml
+- type: FinOps
+  url: finops/chunkr-ai-finops.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
