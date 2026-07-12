@@ -1,0 +1,17 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/chunkr-ai-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: apiKey
+  type: apiKey
+  in: header
+  parameter: Authorization
+  description: 'API key issued from the Chunkr dashboard, sent as the raw value of the Authorization
+    header (e.g. "Authorization: lu_...").'
+  sources:
+  - openapi/chunkr-ai-openapi.yml

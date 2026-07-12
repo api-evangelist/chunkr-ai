@@ -133,6 +133,12 @@ apis:
   description: Liveness health check and metadata helpers, including listing all supported
     file types accepted by the parsing and extraction pipelines.
 common:
+- type: TrustCenter
+  url: security/chunkr-ai-trust-center.yml
+- type: DomainSecurity
+  url: security/chunkr-ai-domain-security.yml
+- type: Authentication
+  url: authentication/chunkr-ai-authentication.yml
 - type: GitHubOrganization
   url: https://github.com/lumina-ai-inc
 - type: LinkedIn

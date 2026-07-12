@@ -1,0 +1,13 @@
+generated: '2026-07-11'
+method: searched
+probe: true
+source: https://chunkr.ai/trust
+url: https://chunkr.ai/trust
+certifications:
+- SOC 2
+- HIPAA
+evidence:
+- source: https://chunkr.ai/trust
+  keywords:
+  - soc2
+  - hipaa
