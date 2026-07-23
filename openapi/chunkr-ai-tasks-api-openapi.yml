@@ -1,0 +1,350 @@
+openapi: 3.0.1
+info:
+  title: Chunkr Files Tasks API
+  description: The Chunkr Cloud API turns complex documents (PDF, Office, images) into RAG- and LLM-ready data. It exposes asynchronous parse and extract tasks that run layout analysis, OCR, segmentation, and chunking, plus file management and utility endpoints. Tasks are created and then polled until they reach a terminal status. Authentication uses an API key passed in the Authorization header.
+  termsOfService: https://chunkr.ai/terms
+  contact:
+    name: Chunkr Support
+    url: https://chunkr.ai
+  license:
+    name: AGPL-3.0 (open-source release) / Commercial (Cloud)
+    url: https://github.com/lumina-ai-inc/chunkr/blob/main/LICENSE
+  version: '1.0'
+servers:
+- url: https://api.chunkr.ai
+  description: Chunkr Cloud API
+- url: https://localhost:8000
+  description: Self-hosted (Docker Compose) deployment
+security:
+- apiKey: []
+tags:
+- name: Tasks
+  description: Create, poll, list, cancel, and delete parse and extract tasks.
+paths:
+  /tasks/parse:
+    post:
+      operationId: createParseTask
+      tags:
+      - Tasks
+      summary: Create a parse task
+      description: Creates a parse task that runs layout analysis, OCR, segmentation, and chunking over the supplied document and returns the initial task record. Poll GET /tasks/{task_id} until status is Succeeded or Failed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateParseTaskRequest'
+      responses:
+        '200':
+          description: Task created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '401':
+          description: Missing or invalid API key.
+  /tasks/extract:
+    post:
+      operationId: createExtractTask
+      tags:
+      - Tasks
+      summary: Create an extract task
+      description: Creates an extract task that pulls schema-driven structured data from a document and returns JSON output with citations and metrics.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExtractTaskRequest'
+      responses:
+        '200':
+          description: Task created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '401':
+          description: Missing or invalid API key.
+  /tasks:
+    get:
+      operationId: listTasks
+      tags:
+      - Tasks
+      summary: List tasks
+      description: Returns a paginated list of tasks for the authenticated account.
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 10
+      - name: include_chunks
+        in: query
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          description: A list of tasks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskResponse'
+  /tasks/{task_id}:
+    get:
+      operationId: getTask
+      tags:
+      - Tasks
+      summary: Get a task
+      description: Retrieves a parse or extract task by id, including output when completed.
+      parameters:
+      - $ref: '#/components/parameters/TaskId'
+      - name: base64_urls
+        in: query
+        description: Return base64-encoded URLs instead of presigned URLs.
+        schema:
+          type: boolean
+          default: false
+      - name: include_chunks
+        in: query
+        description: Include chunks in the response.
+        schema:
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: The task record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        '404':
+          description: Task not found.
+    delete:
+      operationId: deleteTask
+      tags:
+      - Tasks
+      summary: Delete a task
+      description: Deletes a task and its associated artifacts. Tasks must not be processing.
+      parameters:
+      - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Task deleted.
+        '404':
+          description: Task not found.
+  /tasks/{task_id}/parse:
+    get:
+      operationId: getParseTask
+      tags:
+      - Tasks
+      summary: Get a parse task
+      description: Retrieves the parse-specific output for a task.
+      parameters:
+      - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: The parse task record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+  /tasks/{task_id}/extract:
+    get:
+      operationId: getExtractTask
+      tags:
+      - Tasks
+      summary: Get an extract task
+      description: Retrieves the extract-specific output for a task.
+      parameters:
+      - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: The extract task record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+  /tasks/{task_id}/cancel:
+    post:
+      operationId: cancelTask
+      tags:
+      - Tasks
+      summary: Cancel a task
+      description: Cancels a task that is queued or processing.
+      parameters:
+      - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Task cancelled.
+        '404':
+          description: Task not found.
+components:
+  schemas:
+    CreateExtractTaskRequest:
+      type: object
+      required:
+      - file
+      - schema
+      properties:
+        file:
+          type: string
+          description: Document source (file reference, URL, base64, or task id).
+        schema:
+          type: object
+          description: The schema describing the structured data to extract.
+        system_prompt:
+          type: string
+          nullable: true
+        file_name:
+          type: string
+          nullable: true
+        expires_in:
+          type: integer
+          nullable: true
+        parse_configuration:
+          type: object
+          nullable: true
+    ChunkProcessing:
+      type: object
+      properties:
+        target_length:
+          type: integer
+          default: 4096
+          description: Target number of words per chunk.
+        tokenizer:
+          type: string
+          default: Word
+          description: Tokenization method used when measuring chunk length.
+    CreateParseTaskRequest:
+      type: object
+      required:
+      - file
+      properties:
+        file:
+          type: string
+          description: Document source - a ch://files/{file_id} reference, an http(s) URL, a data:*;base64,... URI, or a raw base64 string.
+        file_name:
+          type: string
+          nullable: true
+          description: Optional custom file name.
+        expires_in:
+          type: integer
+          nullable: true
+          description: Seconds until the task and its artifacts are deleted.
+        chunk_processing:
+          $ref: '#/components/schemas/ChunkProcessing'
+        segment_processing:
+          type: object
+          nullable: true
+          description: Per-segment-type configuration (Text, Table, Picture, etc.).
+        ocr_strategy:
+          type: string
+          enum:
+          - All
+          - Auto
+          default: All
+          description: Whether to OCR all pages or only when needed.
+        segmentation_strategy:
+          type: string
+          enum:
+          - LayoutAnalysis
+          - Page
+          default: LayoutAnalysis
+        error_handling:
+          type: string
+          enum:
+          - Fail
+          - Continue
+          default: Fail
+    TaskResponse:
+      type: object
+      required:
+      - task_id
+      - status
+      - task_type
+      - created_at
+      - completed
+      properties:
+        task_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - Starting
+          - Processing
+          - Succeeded
+          - Failed
+          - Cancelled
+        task_type:
+          type: string
+          enum:
+          - Parse
+          - Extract
+        created_at:
+          type: string
+          format: date-time
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        finished_at:
+          type: string
+          format: date-time
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        completed:
+          type: boolean
+        message:
+          type: string
+        configuration:
+          type: object
+        file_info:
+          type: object
+          properties:
+            name:
+              type: string
+            mime_type:
+              type: string
+            page_count:
+              type: integer
+            url:
+              type: string
+        output:
+          type: object
+          nullable: true
+          description: ParseOutputResponse or ExtractOutputResponse with chunks, pages, and pdf_url.
+        task_url:
+          type: string
+          nullable: true
+        version_info:
+          type: object
+          properties:
+            server_version:
+              type: string
+            client_version:
+              type: string
+  parameters:
+    TaskId:
+      name: task_id
+      in: path
+      required: true
+      description: The unique identifier of the task.
+      schema:
+        type: string
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'API key issued from the Chunkr dashboard, sent as the raw value of the Authorization header (e.g. "Authorization: lu_...").'

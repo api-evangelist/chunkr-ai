@@ -1,0 +1,62 @@
+openapi: 3.0.1
+info:
+  title: Chunkr Files Health API
+  description: The Chunkr Cloud API turns complex documents (PDF, Office, images) into RAG- and LLM-ready data. It exposes asynchronous parse and extract tasks that run layout analysis, OCR, segmentation, and chunking, plus file management and utility endpoints. Tasks are created and then polled until they reach a terminal status. Authentication uses an API key passed in the Authorization header.
+  termsOfService: https://chunkr.ai/terms
+  contact:
+    name: Chunkr Support
+    url: https://chunkr.ai
+  license:
+    name: AGPL-3.0 (open-source release) / Commercial (Cloud)
+    url: https://github.com/lumina-ai-inc/chunkr/blob/main/LICENSE
+  version: '1.0'
+servers:
+- url: https://api.chunkr.ai
+  description: Chunkr Cloud API
+- url: https://localhost:8000
+  description: Self-hosted (Docker Compose) deployment
+security:
+- apiKey: []
+tags:
+- name: Health
+  description: Liveness and metadata utilities.
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      tags:
+      - Health
+      summary: Health check
+      description: Liveness check for the Chunkr API.
+      security: []
+      responses:
+        '200':
+          description: Service is healthy.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ok
+  /extras/supported-file-types:
+    get:
+      operationId: getSupportedFileTypes
+      tags:
+      - Health
+      summary: Get all supported file types
+      description: Lists the file types accepted by the parsing and extraction pipelines.
+      responses:
+        '200':
+          description: Supported file types.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'API key issued from the Chunkr dashboard, sent as the raw value of the Authorization header (e.g. "Authorization: lu_...").'
