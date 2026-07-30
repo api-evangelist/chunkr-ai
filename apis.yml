@@ -7,7 +7,20 @@ description: Chunkr is an open-source document intelligence platform that turns 
   at api.chunkr.ai performs layout analysis, OCR, segmentation, and chunking, and
   runs proprietary in-house vision models; the AGPL-3.0 open-source release (lumina-ai-inc/chunkr)
   can be self-hosted via Docker.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/chunkr-ai.png
 tags:
 - Document Parsing
 - OCR
@@ -18,120 +31,108 @@ created: '2026-06-20'
 modified: '2026-06-20'
 specificationVersion: '0.19'
 apis:
-- aid: chunkr-ai:chunkr-parse-task-api
-  name: Chunkr Parse Task API
-  tags:
-  - Parsing
-  - Layout Analysis
-  - Chunking
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+- aid: chunkr-ai:chunkr-ai-files-api
+  name: Chunkr Files API
+  description: Upload and manage files referenced by tasks.
   humanURL: https://docs.chunkr.ai/api-references/tasks/create-parse-task
   baseURL: https://api.chunkr.ai
-  properties:
-  - url: https://docs.chunkr.ai/pages/get-started/welcome
-    type: Documentation
-  - url: https://docs.chunkr.ai/api-references/tasks/create-parse-task
-    type: APIReference
-  - url: openapi/chunkr-ai-openapi.yml
-    type: OpenAPI
-  - url: collections/chunkr-ai.postman_collection.json
-    type: PostmanCollection
-  - url: collections/chunkr-ai.opencollection.json
-    type: OpenCollection
-  description: Creates a parse task that runs layout analysis, OCR, segmentation, and
-    chunking over an uploaded document, returning structured chunks, pages, and segment
-    metadata with configurable chunk_processing, segment_processing, ocr_strategy,
-    and segmentation_strategy.
-- aid: chunkr-ai:chunkr-extract-task-api
-  name: Chunkr Extract Task API
-  tags:
-  - Extraction
-  - Structured Output
-  - Schema
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.chunkr.ai/api-references/tasks/create-extract-task
-  baseURL: https://api.chunkr.ai
-  properties:
-  - url: https://docs.chunkr.ai/api-references/tasks/create-extract-task
-    type: Documentation
-  - url: https://docs.chunkr.ai/api-references/tasks/create-extract-task
-    type: APIReference
-  - url: openapi/chunkr-ai-openapi.yml
-    type: OpenAPI
-  - url: collections/chunkr-ai.postman_collection.json
-    type: PostmanCollection
-  - url: collections/chunkr-ai.opencollection.json
-    type: OpenCollection
-  description: Creates an extract task that pulls schema-driven structured data from
-    a document, returning JSON output with citations and metrics against a caller-supplied
-    extraction schema and optional system prompt.
-- aid: chunkr-ai:chunkr-task-management-api
-  name: Chunkr Task Management API
-  tags:
-  - Tasks
-  - Polling
-  - Lifecycle
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.chunkr.ai/api-references/tasks/get-task
-  baseURL: https://api.chunkr.ai
-  properties:
-  - url: https://docs.chunkr.ai/api-references/tasks/get-task
-    type: Documentation
-  - url: https://docs.chunkr.ai/api-references/tasks/get-task
-    type: APIReference
-  - url: openapi/chunkr-ai-openapi.yml
-    type: OpenAPI
-  - url: collections/chunkr-ai.postman_collection.json
-    type: PostmanCollection
-  - url: collections/chunkr-ai.opencollection.json
-    type: OpenCollection
-  description: Retrieves, lists, cancels, and deletes parse and extract tasks - get
-    a task by id, get its parse or extract output, list tasks with pagination, cancel
-    a running task, and delete a task and its artifacts.
-- aid: chunkr-ai:chunkr-files-api
-  name: Chunkr Files API
   tags:
   - Files
-  - Upload
-  - Storage
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.chunkr.ai/api-references/files/upload-a-file
-  baseURL: https://api.chunkr.ai
   properties:
-  - url: https://docs.chunkr.ai/api-references/files/upload-a-file
-    type: Documentation
-  - url: https://docs.chunkr.ai/api-references/files/upload-a-file
-    type: APIReference
-  - url: openapi/chunkr-ai-openapi.yml
-    type: OpenAPI
-  - url: collections/chunkr-ai.postman_collection.json
-    type: PostmanCollection
-  - url: collections/chunkr-ai.opencollection.json
-    type: OpenCollection
-  description: Uploads, lists, retrieves, downloads, and deletes files that can be
-    referenced by parse and extract tasks via ch://files/{file_id} references.
-- aid: chunkr-ai:chunkr-health-api
-  name: Chunkr Health and Extras API
+  - type: OpenAPI
+    url: openapi/chunkr-ai-files-api-openapi.yml
+  - type: Documentation
+    url: https://docs.chunkr.ai/pages/get-started/welcome
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+  - type: PostmanCollection
+    url: collections/chunkr-ai.postman_collection.json
+  - type: OpenCollection
+    url: collections/chunkr-ai.opencollection.json
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/tasks/create-extract-task
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/tasks/create-extract-task
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/tasks/get-task
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/tasks/get-task
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/files/upload-a-file
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/files/upload-a-file
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/health/health-check
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/health/health-check
+- aid: chunkr-ai:chunkr-ai-health-api
+  name: Chunkr Health API
+  description: Liveness and metadata utilities.
+  humanURL: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+  baseURL: https://api.chunkr.ai
   tags:
   - Health
-  - Utility
-  - Metadata
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.chunkr.ai/api-references/health/health-check
-  baseURL: https://api.chunkr.ai
   properties:
-  - url: https://docs.chunkr.ai/api-references/health/health-check
-    type: Documentation
-  - url: https://docs.chunkr.ai/api-references/health/health-check
-    type: APIReference
-  - url: openapi/chunkr-ai-openapi.yml
-    type: OpenAPI
-  - url: collections/chunkr-ai.postman_collection.json
-    type: PostmanCollection
-  - url: collections/chunkr-ai.opencollection.json
-    type: OpenCollection
-  description: Liveness health check and metadata helpers, including listing all supported
-    file types accepted by the parsing and extraction pipelines.
+  - type: OpenAPI
+    url: openapi/chunkr-ai-health-api-openapi.yml
+  - type: Documentation
+    url: https://docs.chunkr.ai/pages/get-started/welcome
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+  - type: PostmanCollection
+    url: collections/chunkr-ai.postman_collection.json
+  - type: OpenCollection
+    url: collections/chunkr-ai.opencollection.json
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/tasks/create-extract-task
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/tasks/create-extract-task
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/tasks/get-task
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/tasks/get-task
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/files/upload-a-file
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/files/upload-a-file
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/health/health-check
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/health/health-check
+- aid: chunkr-ai:chunkr-ai-tasks-api
+  name: Chunkr Tasks API
+  description: Create, poll, list, cancel, and delete parse and extract tasks.
+  humanURL: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+  baseURL: https://api.chunkr.ai
+  tags:
+  - Tasks
+  properties:
+  - type: OpenAPI
+    url: openapi/chunkr-ai-tasks-api-openapi.yml
+  - type: Documentation
+    url: https://docs.chunkr.ai/pages/get-started/welcome
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+  - type: PostmanCollection
+    url: collections/chunkr-ai.postman_collection.json
+  - type: OpenCollection
+    url: collections/chunkr-ai.opencollection.json
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/tasks/create-extract-task
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/tasks/create-extract-task
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/tasks/get-task
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/tasks/get-task
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/files/upload-a-file
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/files/upload-a-file
+  - type: Documentation
+    url: https://docs.chunkr.ai/api-references/health/health-check
+  - type: APIReference
+    url: https://docs.chunkr.ai/api-references/health/health-check
 common:
 - type: AgenticAccess
   url: agentic-access/chunkr-ai-agentic-access.yml
