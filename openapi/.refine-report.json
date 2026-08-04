@@ -1,0 +1,18 @@
+{
+  "provider": "chunkr-ai",
+  "sources": [
+    "chunkr-ai-files-api-openapi.yml",
+    "chunkr-ai-health-api-openapi.yml",
+    "chunkr-ai-tasks-api-openapi.yml"
+  ],
+  "outputs": [
+    "chunkr-ai-files-api-openapi.yml",
+    "chunkr-ai-health-api-openapi.yml",
+    "chunkr-ai-tasks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
