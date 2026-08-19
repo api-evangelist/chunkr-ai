@@ -1,0 +1,207 @@
+{
+  "item": [
+    {
+      "id": "b410efb9-6a89-4d5e-a7aa-cea64a7d2841",
+      "name": "Health",
+      "description": {
+        "content": "Liveness and metadata utilities.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "72074c21-fab3-404c-a1a3-0e7bb2deec17",
+          "name": "Health check",
+          "request": {
+            "name": "Health check",
+            "description": {
+              "content": "Liveness check for the Chunkr API.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "health"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2b4589ee-0246-47fe-8c93-f5bb1355cd3c",
+              "name": "Service is healthy.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "health"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "ok",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "81e330c6-0213-4f12-843b-8f69459be091",
+          "name": "Get all supported file types",
+          "request": {
+            "name": "Get all supported file types",
+            "description": {
+              "content": "Lists the file types accepted by the parsing and extraction pipelines.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "extras",
+                "supported-file-types"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2c6a5a8a-c5ea-40ee-bbab-6fe0746730e0",
+              "name": "Supported file types.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "extras",
+                    "supported-file-types"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  \"string\",\n  \"string\"\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.chunkr.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "Authorization"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "d9e1a229-bd4b-4f70-bd2c-e793c7e740f3",
+    "name": "Chunkr Files Health API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Chunkr Cloud API turns complex documents (PDF, Office, images) into RAG- and LLM-ready data. It exposes asynchronous parse and extract tasks that run layout analysis, OCR, segmentation, and chunking, plus file management and utility endpoints. Tasks are created and then polled until they reach a terminal status. Authentication uses an API key passed in the Authorization header.\n\nContact Support:\n Name: Chunkr Support",
+      "type": "text/plain"
+    }
+  }
+}

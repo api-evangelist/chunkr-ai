@@ -1,0 +1,48 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Chunkr Files Health API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "Authorization",
+      "value": "{{Authorization}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Health",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Health check",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/health"
+          },
+          "docs": "Liveness check for the Chunkr API."
+        },
+        {
+          "info": {
+            "name": "Get all supported file types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/extras/supported-file-types"
+          },
+          "docs": "Lists the file types accepted by the parsing and extraction pipelines."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

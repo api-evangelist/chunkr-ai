@@ -1,0 +1,1096 @@
+{
+  "item": [
+    {
+      "id": "65dff716-340d-4c74-b882-8ce4c95331c3",
+      "name": "Tasks",
+      "description": {
+        "content": "Create, poll, list, cancel, and delete parse and extract tasks.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "38e70372-e0c0-477e-bcd7-235628a58aad",
+          "name": "Create a parse task",
+          "request": {
+            "name": "Create a parse task",
+            "description": {
+              "content": "Creates a parse task that runs layout analysis, OCR, segmentation, and chunking over the supplied document and returns the initial task record. Poll GET /tasks/{task_id} until status is Succeeded or Failed.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "tasks",
+                "parse"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"file\": \"<string>\",\n  \"file_name\": \"<string>\",\n  \"expires_in\": \"<integer>\",\n  \"chunk_processing\": {\n    \"target_length\": 4096,\n    \"tokenizer\": \"Word\"\n  },\n  \"segment_processing\": \"<object>\",\n  \"ocr_strategy\": \"All\",\n  \"segmentation_strategy\": \"LayoutAnalysis\",\n  \"error_handling\": \"Fail\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "8c30aba2-4c7b-4b7f-857f-47955bda8e40",
+              "name": "Task created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    "parse"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"file\": \"<string>\",\n  \"file_name\": \"<string>\",\n  \"expires_in\": \"<integer>\",\n  \"chunk_processing\": {\n    \"target_length\": 4096,\n    \"tokenizer\": \"Word\"\n  },\n  \"segment_processing\": \"<object>\",\n  \"ocr_strategy\": \"All\",\n  \"segmentation_strategy\": \"LayoutAnalysis\",\n  \"error_handling\": \"Fail\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"task_id\": \"string\",\n  \"status\": \"Cancelled\",\n  \"task_type\": \"Extract\",\n  \"created_at\": \"1965-01-09T16:39:42.093Z\",\n  \"completed\": true,\n  \"started_at\": \"1972-01-22T17:33:40.109Z\",\n  \"finished_at\": \"1996-06-06T18:56:47.758Z\",\n  \"expires_at\": \"1966-11-13T02:03:49.188Z\",\n  \"message\": \"string\",\n  \"configuration\": {},\n  \"file_info\": {\n    \"name\": \"string\",\n    \"mime_type\": \"string\",\n    \"page_count\": 9975,\n    \"url\": \"string\"\n  },\n  \"output\": {},\n  \"task_url\": \"string\",\n  \"version_info\": {\n    \"server_version\": \"string\",\n    \"client_version\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c6482bb6-b0b5-4d7b-8ab9-77268aaea251",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    "parse"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"file\": \"<string>\",\n  \"file_name\": \"<string>\",\n  \"expires_in\": \"<integer>\",\n  \"chunk_processing\": {\n    \"target_length\": 4096,\n    \"tokenizer\": \"Word\"\n  },\n  \"segment_processing\": \"<object>\",\n  \"ocr_strategy\": \"All\",\n  \"segmentation_strategy\": \"LayoutAnalysis\",\n  \"error_handling\": \"Fail\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9814a5d8-0cba-445b-9407-33081a8deb17",
+          "name": "Create an extract task",
+          "request": {
+            "name": "Create an extract task",
+            "description": {
+              "content": "Creates an extract task that pulls schema-driven structured data from a document and returns JSON output with citations and metrics.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "tasks",
+                "extract"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"file\": \"<string>\",\n  \"schema\": \"<object>\",\n  \"system_prompt\": \"<string>\",\n  \"file_name\": \"<string>\",\n  \"expires_in\": \"<integer>\",\n  \"parse_configuration\": \"<object>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "230d91c8-7a95-49d8-befa-63636bd519d9",
+              "name": "Task created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    "extract"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"file\": \"<string>\",\n  \"schema\": \"<object>\",\n  \"system_prompt\": \"<string>\",\n  \"file_name\": \"<string>\",\n  \"expires_in\": \"<integer>\",\n  \"parse_configuration\": \"<object>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"task_id\": \"string\",\n  \"status\": \"Cancelled\",\n  \"task_type\": \"Extract\",\n  \"created_at\": \"1965-01-09T16:39:42.093Z\",\n  \"completed\": true,\n  \"started_at\": \"1972-01-22T17:33:40.109Z\",\n  \"finished_at\": \"1996-06-06T18:56:47.758Z\",\n  \"expires_at\": \"1966-11-13T02:03:49.188Z\",\n  \"message\": \"string\",\n  \"configuration\": {},\n  \"file_info\": {\n    \"name\": \"string\",\n    \"mime_type\": \"string\",\n    \"page_count\": 9975,\n    \"url\": \"string\"\n  },\n  \"output\": {},\n  \"task_url\": \"string\",\n  \"version_info\": {\n    \"server_version\": \"string\",\n    \"client_version\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0ffa078e-346f-4b62-a699-46607cd80fce",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    "extract"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"file\": \"<string>\",\n  \"schema\": \"<object>\",\n  \"system_prompt\": \"<string>\",\n  \"file_name\": \"<string>\",\n  \"expires_in\": \"<integer>\",\n  \"parse_configuration\": \"<object>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "49103fb5-34dc-4381-b038-4e21d7d52128",
+          "name": "List tasks",
+          "request": {
+            "name": "List tasks",
+            "description": {
+              "content": "Returns a paginated list of tasks for the authenticated account.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "tasks"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "disabled": false,
+                  "key": "include_chunks",
+                  "value": "false"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b73ec7f6-c38d-41a7-956b-593a27c80293",
+              "name": "A list of tasks.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "include_chunks",
+                      "value": "false"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"task_id\": \"string\",\n    \"status\": \"Failed\",\n    \"task_type\": \"Parse\",\n    \"created_at\": \"2007-12-08T04:30:16.043Z\",\n    \"completed\": true,\n    \"started_at\": \"1957-07-24T21:55:07.171Z\",\n    \"finished_at\": \"1963-08-07T00:00:21.206Z\",\n    \"expires_at\": \"1992-10-04T22:45:24.995Z\",\n    \"message\": \"string\",\n    \"configuration\": {},\n    \"file_info\": {\n      \"name\": \"string\",\n      \"mime_type\": \"string\",\n      \"page_count\": 2254,\n      \"url\": \"string\"\n    },\n    \"output\": {},\n    \"task_url\": \"string\",\n    \"version_info\": {\n      \"server_version\": \"string\",\n      \"client_version\": \"string\"\n    }\n  },\n  {\n    \"task_id\": \"string\",\n    \"status\": \"Failed\",\n    \"task_type\": \"Parse\",\n    \"created_at\": \"1995-12-31T20:32:23.800Z\",\n    \"completed\": true,\n    \"started_at\": \"1987-07-04T07:16:07.815Z\",\n    \"finished_at\": \"2003-03-07T10:25:54.577Z\",\n    \"expires_at\": \"1948-02-16T20:58:04.284Z\",\n    \"message\": \"string\",\n    \"configuration\": {},\n    \"file_info\": {\n      \"name\": \"string\",\n      \"mime_type\": \"string\",\n      \"page_count\": 6354,\n      \"url\": \"string\"\n    },\n    \"output\": {},\n    \"task_url\": \"string\",\n    \"version_info\": {\n      \"server_version\": \"string\",\n      \"client_version\": \"string\"\n    }\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cdda85d1-98ec-4ff0-93af-5150bd08b08f",
+          "name": "Get a task",
+          "request": {
+            "name": "Get a task",
+            "description": {
+              "content": "Retrieves a parse or extract task by id, including output when completed.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "tasks",
+                ":task_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "base64_urls",
+                  "value": "false",
+                  "description": "Return base64-encoded URLs instead of presigned URLs."
+                },
+                {
+                  "disabled": false,
+                  "key": "include_chunks",
+                  "value": "true",
+                  "description": "Include chunks in the response."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "task_id",
+                  "description": "(Required) The unique identifier of the task."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "0efc0d0a-4bb7-4484-8d07-525afc2b841f",
+              "name": "The task record.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    ":task_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "base64_urls",
+                      "value": "false"
+                    },
+                    {
+                      "key": "include_chunks",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "task_id",
+                      "description": "(Required) The unique identifier of the task."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"task_id\": \"string\",\n  \"status\": \"Cancelled\",\n  \"task_type\": \"Extract\",\n  \"created_at\": \"1965-01-09T16:39:42.093Z\",\n  \"completed\": true,\n  \"started_at\": \"1972-01-22T17:33:40.109Z\",\n  \"finished_at\": \"1996-06-06T18:56:47.758Z\",\n  \"expires_at\": \"1966-11-13T02:03:49.188Z\",\n  \"message\": \"string\",\n  \"configuration\": {},\n  \"file_info\": {\n    \"name\": \"string\",\n    \"mime_type\": \"string\",\n    \"page_count\": 9975,\n    \"url\": \"string\"\n  },\n  \"output\": {},\n  \"task_url\": \"string\",\n  \"version_info\": {\n    \"server_version\": \"string\",\n    \"client_version\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "34d3a2f5-9fd9-4a48-94f7-cadaae55d49b",
+              "name": "Task not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    ":task_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "base64_urls",
+                      "value": "false"
+                    },
+                    {
+                      "key": "include_chunks",
+                      "value": "true"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "task_id",
+                      "description": "(Required) The unique identifier of the task."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6bbd4fe2-e8a0-445a-ba63-bc5b7f1279b3",
+          "name": "Delete a task",
+          "request": {
+            "name": "Delete a task",
+            "description": {
+              "content": "Deletes a task and its associated artifacts. Tasks must not be processing.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "tasks",
+                ":task_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "task_id",
+                  "description": "(Required) The unique identifier of the task."
+                }
+              ]
+            },
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "e8a3cc3c-59e6-4208-ae9d-7dd32c15c9d5",
+              "name": "Task deleted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    ":task_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "task_id",
+                      "description": "(Required) The unique identifier of the task."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "c2db2568-652c-4baa-b49e-352904666d56",
+              "name": "Task not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    ":task_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "task_id",
+                      "description": "(Required) The unique identifier of the task."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "fe80e11a-db99-46fb-9f85-e18205b46615",
+          "name": "Get a parse task",
+          "request": {
+            "name": "Get a parse task",
+            "description": {
+              "content": "Retrieves the parse-specific output for a task.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "tasks",
+                ":task_id",
+                "parse"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "task_id",
+                  "description": "(Required) The unique identifier of the task."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2a10d0a7-0d96-4c6f-a037-690250a973fe",
+              "name": "The parse task record.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    ":task_id",
+                    "parse"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "task_id",
+                      "description": "(Required) The unique identifier of the task."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"task_id\": \"string\",\n  \"status\": \"Cancelled\",\n  \"task_type\": \"Extract\",\n  \"created_at\": \"1965-01-09T16:39:42.093Z\",\n  \"completed\": true,\n  \"started_at\": \"1972-01-22T17:33:40.109Z\",\n  \"finished_at\": \"1996-06-06T18:56:47.758Z\",\n  \"expires_at\": \"1966-11-13T02:03:49.188Z\",\n  \"message\": \"string\",\n  \"configuration\": {},\n  \"file_info\": {\n    \"name\": \"string\",\n    \"mime_type\": \"string\",\n    \"page_count\": 9975,\n    \"url\": \"string\"\n  },\n  \"output\": {},\n  \"task_url\": \"string\",\n  \"version_info\": {\n    \"server_version\": \"string\",\n    \"client_version\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "caa688d7-4d33-4cb9-bf3d-82d98516d6c0",
+          "name": "Get an extract task",
+          "request": {
+            "name": "Get an extract task",
+            "description": {
+              "content": "Retrieves the extract-specific output for a task.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "tasks",
+                ":task_id",
+                "extract"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "task_id",
+                  "description": "(Required) The unique identifier of the task."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "66aa59f9-afaf-4f10-8efc-5b49bc0e2b6b",
+              "name": "The extract task record.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    ":task_id",
+                    "extract"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "task_id",
+                      "description": "(Required) The unique identifier of the task."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"task_id\": \"string\",\n  \"status\": \"Cancelled\",\n  \"task_type\": \"Extract\",\n  \"created_at\": \"1965-01-09T16:39:42.093Z\",\n  \"completed\": true,\n  \"started_at\": \"1972-01-22T17:33:40.109Z\",\n  \"finished_at\": \"1996-06-06T18:56:47.758Z\",\n  \"expires_at\": \"1966-11-13T02:03:49.188Z\",\n  \"message\": \"string\",\n  \"configuration\": {},\n  \"file_info\": {\n    \"name\": \"string\",\n    \"mime_type\": \"string\",\n    \"page_count\": 9975,\n    \"url\": \"string\"\n  },\n  \"output\": {},\n  \"task_url\": \"string\",\n  \"version_info\": {\n    \"server_version\": \"string\",\n    \"client_version\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "641b6830-bb95-4e37-aee7-d52af7ebfdc7",
+          "name": "Cancel a task",
+          "request": {
+            "name": "Cancel a task",
+            "description": {
+              "content": "Cancels a task that is queued or processing.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "tasks",
+                ":task_id",
+                "cancel"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "task_id",
+                  "description": "(Required) The unique identifier of the task."
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f54f9785-8f6f-454c-89b2-a999bbc8bf9b",
+              "name": "Task cancelled.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    ":task_id",
+                    "cancel"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "task_id",
+                      "description": "(Required) The unique identifier of the task."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "49fb47b1-6dd8-4e88-af52-4b57d6a5f07b",
+              "name": "Task not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "tasks",
+                    ":task_id",
+                    "cancel"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "task_id",
+                      "description": "(Required) The unique identifier of the task."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.chunkr.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "Authorization"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "d24b863d-d38d-42b0-bb58-05cc3a0b5498",
+    "name": "Chunkr Files Tasks API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Chunkr Cloud API turns complex documents (PDF, Office, images) into RAG- and LLM-ready data. It exposes asynchronous parse and extract tasks that run layout analysis, OCR, segmentation, and chunking, plus file management and utility endpoints. Tasks are created and then polled until they reach a terminal status. Authentication uses an API key passed in the Authorization header.\n\nContact Support:\n Name: Chunkr Support",
+      "type": "text/plain"
+    }
+  }
+}

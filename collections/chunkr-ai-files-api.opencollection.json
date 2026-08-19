@@ -1,0 +1,146 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Chunkr Files API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "Authorization",
+      "value": "{{Authorization}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Files",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List files",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/files",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Returns a paginated list of uploaded files."
+        },
+        {
+          "info": {
+            "name": "Upload a file",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.chunkr.ai/files",
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Uploads a file that can later be referenced from a parse or extract task via a ch://files/{file_id} reference."
+        },
+        {
+          "info": {
+            "name": "Get a file",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/files/:file_id",
+            "params": [
+              {
+                "name": "file_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the file."
+              }
+            ]
+          },
+          "docs": "Get a file"
+        },
+        {
+          "info": {
+            "name": "Delete a file",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.chunkr.ai/files/:file_id",
+            "params": [
+              {
+                "name": "file_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the file."
+              }
+            ]
+          },
+          "docs": "Delete a file"
+        },
+        {
+          "info": {
+            "name": "Download file content",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/files/:file_id/download",
+            "params": [
+              {
+                "name": "file_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the file."
+              }
+            ]
+          },
+          "docs": "Download file content"
+        },
+        {
+          "info": {
+            "name": "Get a file URL",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.chunkr.ai/files/:file_id/url",
+            "params": [
+              {
+                "name": "file_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the file."
+              }
+            ]
+          },
+          "docs": "Returns a presigned URL for the stored file."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
