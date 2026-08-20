@@ -37,6 +37,8 @@ apis:
   humanURL: https://docs.chunkr.ai/api-references/tasks/create-parse-task
   baseURL: https://api.chunkr.ai
   tags:
+  - File
+  tags_raw:
   - Files
   properties:
   - type: OpenAPI
@@ -105,6 +107,8 @@ apis:
   humanURL: https://docs.chunkr.ai/api-references/tasks/create-parse-task
   baseURL: https://api.chunkr.ai
   tags:
+  - Task
+  tags_raw:
   - Tasks
   properties:
   - type: OpenAPI
