@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Chunkr Files Tasks API
+  title: Chunkr Tasks API
   description: The Chunkr Cloud API turns complex documents (PDF, Office, images) into RAG- and LLM-ready data. It exposes asynchronous parse and extract tasks that run layout analysis, OCR, segmentation, and chunking, plus file management and utility endpoints. Tasks are created and then polled until they reach a terminal status. Authentication uses an API key passed in the Authorization header.
   termsOfService: https://chunkr.ai/terms
   contact:
@@ -188,41 +188,6 @@ paths:
           description: Task not found.
 components:
   schemas:
-    CreateExtractTaskRequest:
-      type: object
-      required:
-      - file
-      - schema
-      properties:
-        file:
-          type: string
-          description: Document source (file reference, URL, base64, or task id).
-        schema:
-          type: object
-          description: The schema describing the structured data to extract.
-        system_prompt:
-          type: string
-          nullable: true
-        file_name:
-          type: string
-          nullable: true
-        expires_in:
-          type: integer
-          nullable: true
-        parse_configuration:
-          type: object
-          nullable: true
-    ChunkProcessing:
-      type: object
-      properties:
-        target_length:
-          type: integer
-          default: 4096
-          description: Target number of words per chunk.
-        tokenizer:
-          type: string
-          default: Word
-          description: Tokenization method used when measuring chunk length.
     CreateParseTaskRequest:
       type: object
       required:
@@ -232,18 +197,21 @@ components:
           type: string
           description: Document source - a ch://files/{file_id} reference, an http(s) URL, a data:*;base64,... URI, or a raw base64 string.
         file_name:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: Optional custom file name.
         expires_in:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
           description: Seconds until the task and its artifacts are deleted.
         chunk_processing:
           $ref: '#/components/schemas/ChunkProcessing'
         segment_processing:
-          type: object
-          nullable: true
+          type:
+          - object
+          - 'null'
           description: Per-segment-type configuration (Text, Table, Picture, etc.).
         ocr_strategy:
           type: string
@@ -292,17 +260,20 @@ components:
           type: string
           format: date-time
         started_at:
-          type: string
+          type:
+          - string
+          - 'null'
           format: date-time
-          nullable: true
         finished_at:
-          type: string
+          type:
+          - string
+          - 'null'
           format: date-time
-          nullable: true
         expires_at:
-          type: string
+          type:
+          - string
+          - 'null'
           format: date-time
-          nullable: true
         completed:
           type: boolean
         message:
@@ -321,12 +292,14 @@ components:
             url:
               type: string
         output:
-          type: object
-          nullable: true
+          type:
+          - object
+          - 'null'
           description: ParseOutputResponse or ExtractOutputResponse with chunks, pages, and pdf_url.
         task_url:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         version_info:
           type: object
           properties:
@@ -334,6 +307,45 @@ components:
               type: string
             client_version:
               type: string
+    CreateExtractTaskRequest:
+      type: object
+      required:
+      - file
+      - schema
+      properties:
+        file:
+          type: string
+          description: Document source (file reference, URL, base64, or task id).
+        schema:
+          type: object
+          description: The schema describing the structured data to extract.
+        system_prompt:
+          type:
+          - string
+          - 'null'
+        file_name:
+          type:
+          - string
+          - 'null'
+        expires_in:
+          type:
+          - integer
+          - 'null'
+        parse_configuration:
+          type:
+          - object
+          - 'null'
+    ChunkProcessing:
+      type: object
+      properties:
+        target_length:
+          type: integer
+          default: 4096
+          description: Target number of words per chunk.
+        tokenizer:
+          type: string
+          default: Word
+          description: Tokenization method used when measuring chunk length.
   parameters:
     TaskId:
       name: task_id
