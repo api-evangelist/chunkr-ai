@@ -187,51 +187,15 @@ paths:
         '404':
           description: Task not found.
 components:
+  parameters:
+    TaskId:
+      name: task_id
+      in: path
+      required: true
+      description: The unique identifier of the task.
+      schema:
+        type: string
   schemas:
-    CreateParseTaskRequest:
-      type: object
-      required:
-      - file
-      properties:
-        file:
-          type: string
-          description: Document source - a ch://files/{file_id} reference, an http(s) URL, a data:*;base64,... URI, or a raw base64 string.
-        file_name:
-          type:
-          - string
-          - 'null'
-          description: Optional custom file name.
-        expires_in:
-          type:
-          - integer
-          - 'null'
-          description: Seconds until the task and its artifacts are deleted.
-        chunk_processing:
-          $ref: '#/components/schemas/ChunkProcessing'
-        segment_processing:
-          type:
-          - object
-          - 'null'
-          description: Per-segment-type configuration (Text, Table, Picture, etc.).
-        ocr_strategy:
-          type: string
-          enum:
-          - All
-          - Auto
-          default: All
-          description: Whether to OCR all pages or only when needed.
-        segmentation_strategy:
-          type: string
-          enum:
-          - LayoutAnalysis
-          - Page
-          default: LayoutAnalysis
-        error_handling:
-          type: string
-          enum:
-          - Fail
-          - Continue
-          default: Fail
     TaskResponse:
       type: object
       required:
@@ -346,14 +310,50 @@ components:
           type: string
           default: Word
           description: Tokenization method used when measuring chunk length.
-  parameters:
-    TaskId:
-      name: task_id
-      in: path
-      required: true
-      description: The unique identifier of the task.
-      schema:
-        type: string
+    CreateParseTaskRequest:
+      type: object
+      required:
+      - file
+      properties:
+        file:
+          type: string
+          description: Document source - a ch://files/{file_id} reference, an http(s) URL, a data:*;base64,... URI, or a raw base64 string.
+        file_name:
+          type:
+          - string
+          - 'null'
+          description: Optional custom file name.
+        expires_in:
+          type:
+          - integer
+          - 'null'
+          description: Seconds until the task and its artifacts are deleted.
+        chunk_processing:
+          $ref: '#/components/schemas/ChunkProcessing'
+        segment_processing:
+          type:
+          - object
+          - 'null'
+          description: Per-segment-type configuration (Text, Table, Picture, etc.).
+        ocr_strategy:
+          type: string
+          enum:
+          - All
+          - Auto
+          default: All
+          description: Whether to OCR all pages or only when needed.
+        segmentation_strategy:
+          type: string
+          enum:
+          - LayoutAnalysis
+          - Page
+          default: LayoutAnalysis
+        error_handling:
+          type: string
+          enum:
+          - Fail
+          - Continue
+          default: Fail
   securitySchemes:
     apiKey:
       type: apiKey

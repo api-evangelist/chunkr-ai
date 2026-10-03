@@ -132,14 +132,6 @@ paths:
                   url:
                     type: string
 components:
-  parameters:
-    FileId:
-      name: file_id
-      in: path
-      required: true
-      description: The unique identifier of the file.
-      schema:
-        type: string
   schemas:
     FileResponse:
       type: object
@@ -155,6 +147,14 @@ components:
         created_at:
           type: string
           format: date-time
+  parameters:
+    FileId:
+      name: file_id
+      in: path
+      required: true
+      description: The unique identifier of the file.
+      schema:
+        type: string
   securitySchemes:
     apiKey:
       type: apiKey
