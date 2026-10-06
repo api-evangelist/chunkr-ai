@@ -43,7 +43,7 @@ tags:
 - RAG
 - Document Intelligence
 created: '2026-06-20'
-modified: '2026-06-20'
+modified: '2026-10-06'
 specificationVersion: '0.23'
 apis:
 - aid: chunkr-ai:chunkr-ai-files-api
@@ -153,6 +153,8 @@ apis:
   - type: APIReference
     url: https://docs.chunkr.ai/api-references/health/health-check
 common:
+- url: https://chunkr.ai/rss.xml
+  type: BlogRSS
 - type: AgenticAccess
   url: agentic-access/chunkr-ai-agentic-access.yml
 - type: TrustCenter
