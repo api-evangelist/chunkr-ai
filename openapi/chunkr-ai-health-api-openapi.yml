@@ -1,62 +1,38 @@
 openapi: 3.2.0
 info:
   title: Chunkr Health API
-  description: The Chunkr Cloud API turns complex documents (PDF, Office, images) into RAG- and LLM-ready data. It exposes asynchronous parse and extract tasks that run layout analysis, OCR, segmentation, and chunking, plus file management and utility endpoints. Tasks are created and then polled until they reach a terminal status. Authentication uses an API key passed in the Authorization header.
-  termsOfService: https://chunkr.ai/terms
+  description: API service for document layout analysis and chunking to convert document into RAG/LLM-ready data.
   contact:
-    name: Chunkr Support
+    name: Chunkr
     url: https://chunkr.ai
+    email: ishaan@lumina.sh
   license:
-    name: AGPL-3.0 (open-source release) / Commercial (Cloud)
-    url: https://github.com/lumina-ai-inc/chunkr/blob/main/LICENSE
-  version: '1.0'
+    name: ''
+  version: 2.66.2
 servers:
 - url: https://api.chunkr.ai
-  description: Chunkr Cloud API
-- url: https://localhost:8000
-  description: Self-hosted (Docker Compose) deployment
-security:
-- apiKey: []
+  description: Chunkr API
 tags:
 - name: Health
-  description: Liveness and metadata utilities.
+  description: Endpoint for checking the health of the service.
 paths:
   /health:
     get:
-      operationId: healthCheck
       tags:
       - Health
-      summary: Health check
-      description: Liveness check for the Chunkr API.
-      security: []
+      summary: Health Check
+      description: Confirmation that the service can respond to requests
+      operationId: health_check
       responses:
         '200':
-          description: Service is healthy.
+          description: Confirmation that the service can respond to requests and the version of the service
           content:
             text/plain:
               schema:
                 type: string
-                example: ok
-  /extras/supported-file-types:
-    get:
-      operationId: getSupportedFileTypes
-      tags:
-      - Health
-      summary: Get all supported file types
-      description: Lists the file types accepted by the parsing and extraction pipelines.
-      responses:
-        '200':
-          description: Supported file types.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
 components:
   securitySchemes:
-    apiKey:
+    api_key:
       type: apiKey
       in: header
       name: Authorization
-      description: 'API key issued from the Chunkr dashboard, sent as the raw value of the Authorization header (e.g. "Authorization: lu_...").'

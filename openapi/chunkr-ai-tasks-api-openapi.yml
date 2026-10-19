@@ -1,362 +1,1719 @@
 openapi: 3.2.0
 info:
   title: Chunkr Tasks API
-  description: The Chunkr Cloud API turns complex documents (PDF, Office, images) into RAG- and LLM-ready data. It exposes asynchronous parse and extract tasks that run layout analysis, OCR, segmentation, and chunking, plus file management and utility endpoints. Tasks are created and then polled until they reach a terminal status. Authentication uses an API key passed in the Authorization header.
-  termsOfService: https://chunkr.ai/terms
+  description: API service for document layout analysis and chunking to convert document into RAG/LLM-ready data.
   contact:
-    name: Chunkr Support
+    name: Chunkr
     url: https://chunkr.ai
+    email: ishaan@lumina.sh
   license:
-    name: AGPL-3.0 (open-source release) / Commercial (Cloud)
-    url: https://github.com/lumina-ai-inc/chunkr/blob/main/LICENSE
-  version: '1.0'
+    name: ''
+  version: 2.66.2
 servers:
 - url: https://api.chunkr.ai
-  description: Chunkr Cloud API
-- url: https://localhost:8000
-  description: Self-hosted (Docker Compose) deployment
-security:
-- apiKey: []
+  description: Chunkr API
 tags:
 - name: Tasks
-  description: Create, poll, list, cancel, and delete parse and extract tasks.
+  description: Endpoints for uploading and managing tasks
 paths:
-  /tasks/parse:
-    post:
-      operationId: createParseTask
-      tags:
-      - Tasks
-      summary: Create a parse task
-      description: Creates a parse task that runs layout analysis, OCR, segmentation, and chunking over the supplied document and returns the initial task record. Poll GET /tasks/{task_id} until status is Succeeded or Failed.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateParseTaskRequest'
-      responses:
-        '200':
-          description: Task created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TaskResponse'
-        '401':
-          description: Missing or invalid API key.
-  /tasks/extract:
-    post:
-      operationId: createExtractTask
-      tags:
-      - Tasks
-      summary: Create an extract task
-      description: Creates an extract task that pulls schema-driven structured data from a document and returns JSON output with citations and metrics.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateExtractTaskRequest'
-      responses:
-        '200':
-          description: Task created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TaskResponse'
-        '401':
-          description: Missing or invalid API key.
   /tasks:
     get:
-      operationId: listTasks
       tags:
       - Tasks
-      summary: List tasks
-      description: Returns a paginated list of tasks for the authenticated account.
+      summary: List Tasks
+      description: 'Lists tasks for the authenticated user with cursor-based pagination
+
+        and optional filtering by date range. Supports ascending or descending
+
+        sort order and optional inclusion of chunks/base64 URLs.'
+      operationId: list_tasks_route
       parameters:
-      - name: page
-        in: query
-        schema:
-          type: integer
-          default: 1
-      - name: limit
-        in: query
-        schema:
-          type: integer
-          default: 10
-      - name: include_chunks
-        in: query
-        schema:
-          type: boolean
-          default: false
-      responses:
-        '200':
-          description: A list of tasks.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TaskResponse'
-  /tasks/{task_id}:
-    get:
-      operationId: getTask
-      tags:
-      - Tasks
-      summary: Get a task
-      description: Retrieves a parse or extract task by id, including output when completed.
-      parameters:
-      - $ref: '#/components/parameters/TaskId'
       - name: base64_urls
         in: query
-        description: Return base64-encoded URLs instead of presigned URLs.
+        description: Whether to return base64 encoded URLs. If false, the URLs will be returned as presigned URLs.
+        required: false
         schema:
           type: boolean
-          default: false
+      - name: end
+        in: query
+        description: End date
+        required: false
+        schema:
+          type: string
+          format: date-time
       - name: include_chunks
         in: query
-        description: Include chunks in the response.
+        description: Whether to include chunks in the output response
+        required: false
         schema:
           type: boolean
-          default: true
+      - name: limit
+        in: query
+        description: Number of tasks per page
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: cursor
+        in: query
+        description: Cursor for pagination (timestamp)
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: start
+        in: query
+        description: Start date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: sort
+        in: query
+        description: 'Sort order: ''asc'' for ascending, ''desc'' for descending (default)'
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortOrder'
+      - name: task_types
+        in: query
+        description: Filter by one or more task types
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskType'
+      - name: statuses
+        in: query
+        description: Filter by one or more statuses
+        required: false
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/Status'
       responses:
         '200':
-          description: The task record.
+          description: Paginated list of tasks
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaskResponse'
-        '404':
-          description: Task not found.
-    delete:
-      operationId: deleteTask
+                $ref: '#/components/schemas/TasksResponse'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
+  /tasks/extract:
+    post:
       tags:
       - Tasks
-      summary: Delete a task
-      description: Deletes a task and its associated artifacts. Tasks must not be processing.
-      parameters:
-      - $ref: '#/components/parameters/TaskId'
+      summary: Create Extract Task
+      description: 'Queues a document/parsed task for extraction and returns a `TaskResponse` with the
+
+        assigned `task_id`, initial configuration, file metadata, and timestamps.
+
+        The initial status is `Starting`.
+
+
+        Creates an extract task and returns its metadata immediately.'
+      operationId: create_extract_task_route
+      requestBody:
+        description: JSON request to create an extract task
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExtractForm'
+        required: true
       responses:
         '200':
-          description: Task deleted.
-        '404':
-          description: Task not found.
-  /tasks/{task_id}/parse:
+          description: Task created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtractTaskResponse'
+        '400':
+          description: Invalid request or unsupported file type
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '429':
+          description: Usage limit exceeded or rate limit exceeded
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
+  /tasks/parse:
+    post:
+      tags:
+      - Tasks
+      summary: Create Parse Task
+      description: 'Queues a document for processing and returns a `TaskResponse` with the
+
+        assigned `task_id`, initial configuration, file metadata, and timestamps.
+
+        The initial status is `Starting`.
+
+
+        Creates a parse task and returns its metadata immediately.'
+      operationId: create_parse_task_route
+      requestBody:
+        description: JSON request to create a parse task
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateParseForm'
+        required: true
+      responses:
+        '200':
+          description: Task created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseTaskResponse'
+        '400':
+          description: Invalid request or unsupported file type
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '429':
+          description: Usage limit exceeded or rate limit exceeded
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
+  /tasks/{task_id}:
     get:
-      operationId: getParseTask
       tags:
       - Tasks
-      summary: Get a parse task
-      description: Retrieves the parse-specific output for a task.
+      summary: Get Task
+      description: 'Retrieves the current state of a task.
+
+
+        Returns task details such as processing status, configuration, output (when
+
+        available), file metadata, and timestamps.
+
+
+        Typical uses:
+
+        - Poll a task during processing
+
+        - Retrieve the final output once processing is complete
+
+        - Access task metadata and configuration'
+      operationId: get_task_route
       parameters:
-      - $ref: '#/components/parameters/TaskId'
+      - name: task_id
+        in: path
+        description: Id of the task to retrieve
+        required: true
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: base64_urls
+        in: query
+        description: Whether to return base64 encoded URLs. If false, the URLs will be returned as presigned URLs.
+        required: false
+        schema:
+          type: boolean
+      - name: include_chunks
+        in: query
+        description: Whether to include chunks in the output response
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
-          description: The parse task record.
+          description: Task details.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskResponse'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Task not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
+    delete:
+      tags:
+      - Tasks
+      summary: Delete Task
+      description: 'Delete a task by its ID.
+
+
+        Requirements:
+
+        - Task must have status `Succeeded` or `Failed`'
+      operationId: delete_task_route
+      parameters:
+      - name: task_id
+        in: path
+        description: Id of the task to delete
+        required: true
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: Task deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Task not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
+  /tasks/{task_id}/cancel:
+    get:
+      tags:
+      - Tasks
+      summary: Cancel Task
+      description: 'Cancel a task that hasn''t started processing yet:
+
+        - For new tasks: Status will be updated to `Cancelled`
+
+        - For updating tasks: Task will revert to the previous state
+
+
+        Requirements:
+
+        - Task must have status `Starting`'
+      operationId: cancel_task_route
+      parameters:
+      - name: task_id
+        in: path
+        description: Id of the task to cancel
+        required: true
+        schema:
+          type:
+          - string
+          - 'null'
+      responses:
+        '200':
+          description: Task cancelled successfully
+        '400':
+          description: Task cannot be cancelled in its current state
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Task not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
   /tasks/{task_id}/extract:
     get:
-      operationId: getExtractTask
       tags:
       - Tasks
-      summary: Get an extract task
-      description: Retrieves the extract-specific output for a task.
+      summary: Get Extract Task
+      description: 'Retrieves the current state of an extract task.
+
+
+        Returns task details such as processing status, configuration, output (when
+
+        available), file metadata, and timestamps.
+
+
+        Typical uses:
+
+        - Poll a task during processing
+
+        - Retrieve the final output once processing is complete
+
+        - Access task metadata and configuration'
+      operationId: get_extract_task_route
       parameters:
-      - $ref: '#/components/parameters/TaskId'
+      - name: task_id
+        in: path
+        description: Id of the task to retrieve
+        required: true
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: base64_urls
+        in: query
+        description: Whether to return base64 encoded URLs. If false, the URLs will be returned as presigned URLs.
+        required: false
+        schema:
+          type: boolean
+      - name: include_chunks
+        in: query
+        description: Whether to include chunks in the output response
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
-          description: The extract task record.
+          description: Task details.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaskResponse'
-  /tasks/{task_id}/cancel:
-    post:
-      operationId: cancelTask
+                $ref: '#/components/schemas/ExtractTaskResponse'
+        '400':
+          description: Task type mismatch - the task is not an extract task
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Task not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
+  /tasks/{task_id}/parse:
+    get:
       tags:
       - Tasks
-      summary: Cancel a task
-      description: Cancels a task that is queued or processing.
+      summary: Get Parse Task
+      description: 'Retrieves the current state of a parse task.
+
+
+        Returns task details such as processing status, configuration, output (when
+
+        available), file metadata, and timestamps.
+
+
+        Typical uses:
+
+        - Poll a task during processing
+
+        - Retrieve the final output once processing is complete
+
+        - Access task metadata and configuration'
+      operationId: get_parse_task_route
       parameters:
-      - $ref: '#/components/parameters/TaskId'
+      - name: task_id
+        in: path
+        description: Id of the task to retrieve
+        required: true
+        schema:
+          type:
+          - string
+          - 'null'
+      - name: base64_urls
+        in: query
+        description: Whether to return base64 encoded URLs. If false, the URLs will be returned as presigned URLs.
+        required: false
+        schema:
+          type: boolean
+      - name: include_chunks
+        in: query
+        description: Whether to include chunks in the output response
+        required: false
+        schema:
+          type: boolean
       responses:
         '200':
-          description: Task cancelled.
+          description: Task details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseTaskResponse'
+        '400':
+          description: Task type mismatch - the task is not a parse task
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
-          description: Task not found.
+          description: Task not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
 components:
   schemas:
-    ChunkProcessing:
-      type: object
-      properties:
-        target_length:
-          type: integer
-          default: 4096
-          description: Target number of words per chunk.
-        tokenizer:
-          type: string
-          default: Word
-          description: Tokenization method used when measuring chunk length.
-    CreateExtractTaskRequest:
-      type: object
-      required:
-      - file
-      - schema
-      properties:
-        file:
-          type: string
-          description: Document source (file reference, URL, base64, or task id).
-        schema:
-          type: object
-          description: The schema describing the structured data to extract.
-        system_prompt:
-          type:
-          - string
-          - 'null'
-        file_name:
-          type:
-          - string
-          - 'null'
-        expires_in:
-          type:
-          - integer
-          - 'null'
-        parse_configuration:
-          type:
-          - object
-          - 'null'
     TaskResponse:
       type: object
       required:
-      - task_id
+      - configuration
+      - completed
+      - created_at
+      - file_info
+      - message
       - status
       - task_type
-      - created_at
-      - completed
+      - task_id
+      - version_info
       properties:
-        task_id:
-          type: string
-        status:
-          type: string
-          enum:
-          - Starting
-          - Processing
-          - Succeeded
-          - Failed
-          - Cancelled
-        task_type:
-          type: string
-          enum:
-          - Parse
-          - Extract
+        completed:
+          type: boolean
+          description: True when the task reaches a terminal state i.e. `status` is `Succeeded` or `Failed` or `Cancelled`
+        configuration:
+          $ref: '#/components/schemas/TaskConfiguration'
         created_at:
           type: string
           format: date-time
-        started_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        finished_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
+          description: The date and time when the task was created and queued.
         expires_at:
           type:
           - string
           - 'null'
           format: date-time
-        completed:
-          type: boolean
+          description: The date and time when the task will expire.
+        file_info:
+          $ref: '#/components/schemas/FileInfo'
+        finished_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date and time when the task was finished.
+        input_file_url:
+          type:
+          - string
+          - 'null'
+          description: 'The presigned URL of the input file.
+
+            Deprecated use `file_info.url` instead.'
+          deprecated: true
         message:
           type: string
-        configuration:
-          type: object
-        file_info:
-          type: object
-          properties:
-            name:
-              type: string
-            mime_type:
-              type: string
-            page_count:
-              type: integer
-            url:
-              type: string
+          description: A message describing the task's status or any errors that occurred.
         output:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/TaskOutput'
+        parse_task_id:
           type:
-          - object
+          - string
           - 'null'
-          description: ParseOutputResponse or ExtractOutputResponse with chunks, pages, and pdf_url.
+          description: The ID of the source `parse` task that was used for the task
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date and time when the task was started.
+        status:
+          $ref: '#/components/schemas/Status'
+        task_id:
+          type: string
+          description: The unique identifier for the task.
+        task_type:
+          $ref: '#/components/schemas/TaskType'
         task_url:
           type:
           - string
           - 'null'
+          description: The presigned URL of the task.
         version_info:
-          type: object
-          properties:
-            server_version:
-              type: string
-            client_version:
-              type: string
-    CreateParseTaskRequest:
+          $ref: '#/components/schemas/VersionInfo'
+    TokenizerType:
+      oneOf:
+      - type: object
+        title: Enum
+        description: Use one of the predefined tokenizer types
+        required:
+        - Enum
+        properties:
+          Enum:
+            $ref: '#/components/schemas/Tokenizer'
+            description: Use one of the predefined tokenizer types
+      - type: object
+        title: String
+        description: 'Use any Hugging Face tokenizer by specifying its model ID
+
+          Examples: "Qwen/Qwen-tokenizer", "facebook/bart-large"'
+        required:
+        - String
+        properties:
+          String:
+            type: string
+            description: 'Use any Hugging Face tokenizer by specifying its model ID
+
+              Examples: "Qwen/Qwen-tokenizer", "facebook/bart-large"'
+      description: "Specifies which tokenizer to use for the chunking process.\n\nThis type supports two ways of specifying a tokenizer:\n1. Using a predefined tokenizer from the `Tokenizer` enum\n2. Using any Hugging Face tokenizer by providing its model ID as a string\n   (e.g. \"facebook/bart-large\", \"Qwen/Qwen-tokenizer\", etc.)\n\nWhen using a string, any valid Hugging Face tokenizer ID can be specified,\nwhich will be loaded using the Hugging Face tokenizers library."
+    GenerationConfig:
+      type: object
+      description: "Controls the processing and generation for the segment.\n- `crop_image` controls whether to crop the file's images to the segment's bounding box.\n  The cropped image will be stored in the segment's `image` field. Use `All` to always crop,\n  or `Auto` to only crop when needed for post-processing.\n- `format` specifies the output format: `Html` or `Markdown`\n- `strategy` determines how the content is generated: `Auto`, `LLM`, or `Ignore`\n  - `Auto`: Process content automatically\n  - `LLM`: Use large language models for processing\n  - `Ignore`: Exclude segments from final output\n- `description` enables LLM-generated descriptions for segments.\n  **Note:** This uses chunkr's own VLM models and is not configurable via LLM processing configuration.\n- `extended_context` uses the full page image as context for LLM generation."
+      properties:
+        crop_image:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CroppingStrategy'
+          default: null
+        description:
+          type:
+          - boolean
+          - 'null'
+          description: Generate LLM descriptions for this segment
+          default: null
+        extended_context:
+          type:
+          - boolean
+          - 'null'
+          description: Use the full page image as context for LLM generation
+          default: null
+        format:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SegmentFormat'
+          default: null
+        llm:
+          type:
+          - string
+          - 'null'
+          deprecated: true
+        strategy:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationStrategy'
+          default: null
+    Status:
+      type: string
+      description: The status of the task.
+      enum:
+      - Starting
+      - Processing
+      - Succeeded
+      - Failed
+      - Cancelled
+    ExtractTaskResponse:
       type: object
       required:
-      - file
+      - configuration
+      - completed
+      - created_at
+      - file_info
+      - message
+      - status
+      - task_type
+      - task_id
+      - version_info
       properties:
-        file:
+        completed:
+          type: boolean
+          description: True when the task reaches a terminal state i.e. `status` is `Succeeded` or `Failed` or `Cancelled`
+        configuration:
+          $ref: '#/components/schemas/ExtractConfiguration'
+        created_at:
           type: string
-          description: Document source - a ch://files/{file_id} reference, an http(s) URL, a data:*;base64,... URI, or a raw base64 string.
+          format: date-time
+          description: The date and time when the task was created and queued.
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date and time when the task will expire.
+        file_info:
+          $ref: '#/components/schemas/FileInfo'
+        finished_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date and time when the task was finished.
+        input_file_url:
+          type:
+          - string
+          - 'null'
+          description: 'The presigned URL of the input file.
+
+            Deprecated use `file_info.url` instead.'
+          deprecated: true
+        message:
+          type: string
+          description: A message describing the task's status or any errors that occurred.
+        output:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ExtractOutputResponse'
+        parse_task_id:
+          type:
+          - string
+          - 'null'
+          description: The ID of the source `parse` task that was used for extraction
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date and time when the task was started.
+        status:
+          $ref: '#/components/schemas/Status'
+        task_id:
+          type: string
+          description: The unique identifier for the task.
+        task_type:
+          $ref: '#/components/schemas/TaskType'
+        task_url:
+          type:
+          - string
+          - 'null'
+          description: The presigned URL of the task.
+        version_info:
+          $ref: '#/components/schemas/VersionInfo'
+    CreateExtractForm:
+      allOf:
+      - $ref: '#/components/schemas/ExtractConfiguration'
+      - type: object
+        required:
+        - file
+        properties:
+          expires_in:
+            type:
+            - integer
+            - 'null'
+            format: int32
+            description: 'The number of seconds until task is deleted.
+
+              Expired tasks can **not** be updated, polled or accessed via web interface.'
+          file:
+            type: string
+            description: 'The file to be extracted. Supported inputs:
+
+              - `ch://files/{file_id}`: Reference to an existing file. Upload via the Files API
+
+              - `http(s)://...`: Remote URL to fetch
+
+              - `data:*;base64,...` or raw base64 string
+
+              - `task_id`: Reference to an existing `parse`task.'
+          file_name:
+            type:
+            - string
+            - 'null'
+            description: 'The name of the file to be extracted. If not set a name will be generated.
+
+              Can not be provided if the `file` is a `task_id`.'
+    TaskConfiguration:
+      oneOf:
+      - $ref: '#/components/schemas/ParseConfiguration'
+        description: Configuration for a parsing task
+      - $ref: '#/components/schemas/ExtractConfiguration'
+        description: Configuration for an extraction task
+      description: Unified configuration type that can represent either parse or extract configurations
+    SegmentFormat:
+      type: string
+      description: The format for the `content` field of a segment.
+      enum:
+      - Html
+      - Markdown
+    ParseConfiguration:
+      type: object
+      title: Parse
+      properties:
+        chunk_processing:
+          oneOf:
+          - $ref: '#/components/schemas/ChunkProcessing'
+          default:
+            ignore_headers_and_footers: null
+            target_length: 4096
+            tokenizer:
+              Enum: Word
+        error_handling:
+          oneOf:
+          - $ref: '#/components/schemas/ErrorHandlingStrategy'
+          default: Fail
+        ocr_strategy:
+          oneOf:
+          - $ref: '#/components/schemas/OcrStrategy'
+          default: All
+        pipeline:
+          oneOf:
+          - $ref: '#/components/schemas/PipelineType'
+          default: Chunkr
+        segment_processing:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/SegmentProcessing'
+          default: null
+        segmentation_strategy:
+          oneOf:
+          - $ref: '#/components/schemas/SegmentationStrategy'
+          default: LayoutAnalysis
+    SegmentType:
+      type: string
+      description: All the possible types for a segment.
+      enum:
+      - Caption
+      - Footnote
+      - Formula
+      - FormRegion
+      - GraphicalItem
+      - Legend
+      - LineNumber
+      - ListItem
+      - Page
+      - PageFooter
+      - PageHeader
+      - PageNumber
+      - Picture
+      - Table
+      - Text
+      - Title
+      - Unknown
+      - SectionHeader
+    ExtractConfiguration:
+      type: object
+      title: Extract
+      required:
+      - schema
+      properties:
+        parse_configuration:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ParseConfiguration'
+            description: 'Optional configuration for the `parse` task.
+
+              Can not be used if `file` is a `task_id`.'
+        schema:
+          type: object
+          description: The schema to be used for the extraction.
+        system_prompt:
+          type:
+          - string
+          - 'null'
+          description: The system prompt to be used for the extraction.
+          default: You are an expert at structured data extraction. You will be given parsed text from a document and should convert it into the given structure.
+    CellStyle:
+      type: object
+      properties:
+        align:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/Alignment'
+            description: Alignment of the cell content.
+        bg_color:
+          type:
+          - string
+          - 'null'
+          description: Background color of the cell (e.g., "#FFFFFF" or "#DAE3F3").
+        font_face:
+          type:
+          - string
+          - 'null'
+          description: Font face/family of the cell (e.g., "Arial", "Daytona").
+        is_bold:
+          type:
+          - boolean
+          - 'null'
+          description: Whether the cell content is bold.
+        text_color:
+          type:
+          - string
+          - 'null'
+          description: Text color of the cell (e.g., "#000000" or "red").
+        valign:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/VerticalAlignment'
+            description: Vertical alignment of the cell content.
+    VerticalAlignment:
+      type: string
+      enum:
+      - Top
+      - Middle
+      - Bottom
+      - Baseline
+    TaskOutput:
+      oneOf:
+      - $ref: '#/components/schemas/ParseOutputResponse'
+        description: Output from a parsing task
+      - $ref: '#/components/schemas/ExtractOutputResponse'
+        description: Output from an extraction task
+      description: Unified output type that can represent either parse or extract results
+    OcrStrategy:
+      type: string
+      description: 'Controls the Optical Character Recognition (OCR) strategy.
+
+        - `All`: Processes all pages with OCR. (Latency penalty: ~0.5 seconds per page)
+
+        - `Auto`: Selectively applies OCR only to pages with missing or low-quality text. When text layer is present the bounding boxes from the text layer are used.'
+      enum:
+      - All
+      - Auto
+    Chunk:
+      type: object
+      required:
+      - chunk_length
+      - segments
+      properties:
+        chunk_id:
+          type: string
+          description: The unique identifier for the chunk.
+        chunk_length:
+          type: integer
+          format: int32
+          description: The total number of tokens in the `embed` field of the chunk. Calculated by the `tokenizer`.
+          minimum: 0
+        content:
+          type:
+          - string
+          - 'null'
+          description: 'The content of the chunk. This is the text that is generated by combining the `content` field from each segment.
+
+            Can be used provided as context to the LLM.'
+        embed:
+          type:
+          - string
+          - 'null'
+          description: Suggested text to be embedded for the chunk. This text is generated by combining the `embed` field from each segment.
+        segments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Segment'
+          description: 'Collection of document segments that form this chunk.
+
+            When `target_chunk_length` > 0, contains the maximum number of segments
+
+            that fit within that length (segments remain intact).
+
+            Otherwise, contains exactly one segment.'
+    Alignment:
+      type: string
+      enum:
+      - Left
+      - Center
+      - Right
+      - Justify
+    Cell:
+      type: object
+      required:
+      - cell_id
+      - text
+      - range
+      properties:
+        cell_id:
+          type: string
+          description: The cell ID.
+        formula:
+          type:
+          - string
+          - 'null'
+          description: Formula of the cell.
+        hyperlink:
+          type:
+          - string
+          - 'null'
+          description: Hyperlink URL if the cell contains a link (e.g., "https://www.chunkr.ai").
+        range:
+          type: string
+          description: Range of the cell.
+        style:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/CellStyle'
+            description: Styling information for the cell including colors, fonts, and formatting.
+        text:
+          type: string
+          description: Text content of the cell.
+        value:
+          type:
+          - string
+          - 'null'
+          description: 'The computed/evaluated value of the cell. This represents the actual result after evaluating any formulas,
+
+            as opposed to the raw text content. For cells with formulas, this is the calculated result;
+
+            for cells with static content, this is typically the same as the text field.
+
+
+            Example: text might show "3.14" (formatted to 2 decimal places) while value could be "3.141592653589793" (full precision).'
+    OCRResult:
+      type: object
+      description: OCR results for a segment
+      required:
+      - bbox
+      - text
+      properties:
+        bbox:
+          $ref: '#/components/schemas/BoundingBox'
+        confidence:
+          type:
+          - number
+          - 'null'
+          format: float
+          description: The confidence score of the recognized text.
+        ocr_id:
+          type: string
+          description: The unique identifier for the OCR result.
+        ss_cell_ref:
+          type:
+          - string
+          - 'null'
+          description: Excel-style cell reference (e.g., "A1" or "A1:B2") when OCR originates from a spreadsheet cell
+        text:
+          type: string
+          description: The recognized text of the OCR result.
+    Segment:
+      type: object
+      required:
+      - bbox
+      - page_height
+      - page_width
+      - page_number
+      - segment_id
+      - segment_type
+      properties:
+        bbox:
+          $ref: '#/components/schemas/BoundingBox'
+        confidence:
+          type:
+          - number
+          - 'null'
+          format: float
+          description: Confidence score of the layout analysis model
+        content:
+          type: string
+          description: Content of the segment, will be either HTML or Markdown, depending on format chosen.
+        description:
+          type:
+          - string
+          - 'null'
+          description: Description of the segment, generated by the LLM.
+        embed:
+          type:
+          - string
+          - 'null'
+          description: Embeddable content of the segment.
+        image:
+          type:
+          - string
+          - 'null'
+          description: Presigned URL to the image of the segment.
+        llm:
+          type:
+          - string
+          - 'null'
+          description: LLM representation of the segment.
+          deprecated: true
+        ocr:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OCRResult'
+          description: OCR results for the segment.
+        page_height:
+          type: number
+          format: float
+          description: Height of the page/sheet containing the segment.
+        page_number:
+          type: integer
+          format: int32
+          description: Page number/Sheet number of the segment.
+          minimum: 0
+        page_width:
+          type: number
+          format: float
+          description: Width of the page/sheet containing the segment.
+        segment_id:
+          type: string
+          description: Unique identifier for the segment.
+        segment_length:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: Length of the segment in tokens.
+          minimum: 0
+        segment_type:
+          $ref: '#/components/schemas/SegmentType'
+        ss_cells:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Cell'
+          description: Cells of the segment. Only used for Spreadsheets.
+        ss_header_bbox:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/BoundingBox'
+            description: Bounding box of the header of the segment, if found. Only used for Spreadsheets.
+        ss_header_ocr:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OCRResult'
+          description: OCR results of the header of the segment, if found. Only used for Spreadsheets.
+        ss_header_range:
+          type:
+          - string
+          - 'null'
+          description: 'Header range of the segment, if found.
+
+            The header can have overlap with the `segment.range` if the table contains the header,
+
+            if the header is located in a different sheet, the header range will have no overlap with the `segment.range`.
+
+            Only used for Spreadsheets.'
+        ss_header_text:
+          type:
+          - string
+          - 'null'
+          description: Text content of the header of the segment, if found. Only used for Spreadsheets.
+        ss_range:
+          type:
+          - string
+          - 'null'
+          description: Range of the segment in Excel notation (e.g., A1:B5). Only used for Spreadsheets.
+        ss_sheet_name:
+          type:
+          - string
+          - 'null'
+          description: Name of the sheet containing the segment. Only used for Spreadsheets.
+        text:
+          type: string
+          description: Text content of the segment. Calculated by the OCR results.
+    ParseOutputResponse:
+      type: object
+      title: Parse
+      description: The processed results of a document parsing task
+      required:
+      - chunks
+      properties:
+        chunks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Chunk'
+          description: Collection of document chunks, where each chunk contains one or more segments
         file_name:
           type:
           - string
           - 'null'
-          description: Optional custom file name.
-        expires_in:
+          description: The name of the file. Deprecated use `file_info.name` instead.
+          deprecated: true
+        mime_type:
+          type:
+          - string
+          - 'null'
+          description: The MIME type of the file. Deprecated use `file_info.mime_type` instead.
+          deprecated: true
+        page_count:
           type:
           - integer
           - 'null'
-          description: Seconds until the task and its artifacts are deleted.
-        chunk_processing:
-          $ref: '#/components/schemas/ChunkProcessing'
-        segment_processing:
+          format: int32
+          description: The number of pages in the file. Deprecated use `file_info.page_count` instead.
+          deprecated: true
+          minimum: 0
+        pages:
           type:
-          - object
+          - array
           - 'null'
-          description: Per-segment-type configuration (Text, Table, Picture, etc.).
-        ocr_strategy:
+          items:
+            $ref: '#/components/schemas/Page'
+          description: The pages of the file. Includes the image and metadata for each page.
+        pdf_url:
+          type:
+          - string
+          - 'null'
+          description: The presigned URL of the PDF file.
+    CreateParseForm:
+      allOf:
+      - $ref: '#/components/schemas/ParseConfiguration'
+      - type: object
+        required:
+        - file
+        properties:
+          expires_in:
+            type:
+            - integer
+            - 'null'
+            format: int32
+            description: 'The number of seconds until task is deleted.
+
+              Expired tasks can **not** be updated, polled or accessed via web interface.'
+          file:
+            type: string
+            description: 'The file to be parsed. Supported inputs:
+
+              - `ch://files/{file_id}`: Reference to an existing file. Upload via the Files API
+
+              - `http(s)://...`: Remote URL to fetch
+
+              - `data:*;base64,...` or raw base64 string'
+          file_name:
+            type:
+            - string
+            - 'null'
+            description: The name of the file to be parsed. If not set a name will be generated.
+    ParseTaskResponse:
+      type: object
+      required:
+      - configuration
+      - completed
+      - created_at
+      - file_info
+      - message
+      - status
+      - task_type
+      - task_id
+      - version_info
+      properties:
+        completed:
+          type: boolean
+          description: True when the task reaches a terminal state i.e. `status` is `Succeeded` or `Failed` or `Cancelled`
+        configuration:
+          $ref: '#/components/schemas/ParseConfiguration'
+        created_at:
           type: string
-          enum:
-          - All
-          - Auto
-          default: All
-          description: Whether to OCR all pages or only when needed.
-        segmentation_strategy:
+          format: date-time
+          description: The date and time when the task was created and queued.
+        expires_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date and time when the task will expire.
+        file_info:
+          $ref: '#/components/schemas/FileInfo'
+        finished_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date and time when the task was finished.
+        input_file_url:
+          type:
+          - string
+          - 'null'
+          description: 'The presigned URL of the input file.
+
+            Deprecated use `file_info.url` instead.'
+          deprecated: true
+        message:
           type: string
-          enum:
-          - LayoutAnalysis
-          - Page
-          default: LayoutAnalysis
-        error_handling:
+          description: A message describing the task's status or any errors that occurred.
+        output:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/ParseOutputResponse'
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date and time when the task was started.
+        status:
+          $ref: '#/components/schemas/Status'
+        task_id:
           type: string
-          enum:
-          - Fail
-          - Continue
-          default: Fail
-  parameters:
-    TaskId:
-      name: task_id
-      in: path
-      required: true
-      description: The unique identifier of the task.
-      schema:
-        type: string
+          description: The unique identifier for the task.
+        task_type:
+          $ref: '#/components/schemas/TaskType'
+        task_url:
+          type:
+          - string
+          - 'null'
+          description: The presigned URL of the task.
+        version_info:
+          $ref: '#/components/schemas/VersionInfo'
+    TasksResponse:
+      type: object
+      required:
+      - tasks
+      - has_more
+      properties:
+        has_more:
+          type: boolean
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskResponse'
+    ExtractOutputResponse:
+      type: object
+      title: Extract
+      description: 'The processed results of a document extraction task.
+
+
+        Shapes:
+
+        - `results`: JSON matching the user-provided schema.
+
+        - `citations`: mirror of `results`; only leaf positions (primitive or array-of-primitives) contain a `Vec<Citation>` supporting that field.
+
+        - `metrics`: mirror of `results`; only leaf positions contain a `Metrics` object for that field.'
+      required:
+      - results
+      - citations
+      - metrics
+      properties:
+        citations:
+          description: "Mirror of `results`; leaves are `Vec<Citation>` for the corresponding field\n\nExample:\n\n```json\n{\n  \"field_name\": [\n    {\n      \"citation_id\": \"abc1234\",\n      \"citation_type\": \"Segment\",\n      \"bboxes\": [\n        {\n          \"left\": 10,\n          \"top\": 20,\n          \"width\": 100,\n          \"height\": 18\n        }\n      ],\n      \"content\": \"Example content\",\n      \"segment_id\": \"seg_001\",\n      \"segment_type\": \"Text\",\n      \"page_number\": 1,\n      \"page_height\": 297,\n      \"page_width\": 210,\n      \"ss_ranges\": [\"A1:C10\"],\n      \"ss_sheet_name\": \"Sheet1\"\n    }\n  ]\n}\n```"
+        metrics:
+          description: 'Mirror of `results`; leaves contain a `Metrics` object for the corresponding field
+
+
+            Example:
+
+
+            ```json
+
+            { "field_name": { "confidence": "High" } }
+
+            ```'
+        results:
+          description: 'JSON data that matches the provided schema
+
+
+            Example:
+
+
+            ```json
+
+            { "field_name": "value" }
+
+            ```'
+    SegmentationStrategy:
+      type: string
+      description: 'Controls the segmentation strategy:
+
+        - `LayoutAnalysis`: Analyzes pages for layout elements (e.g., `Table`, `Picture`, `Formula`, etc.) using bounding boxes. Provides fine-grained segmentation and better chunking.
+
+        - `Page`: Treats each page as a single segment. Faster processing, but without layout element detection and only simple chunking.'
+      enum:
+      - LayoutAnalysis
+      - Page
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+    Tokenizer:
+      type: string
+      description: 'Common tokenizers used for text processing.
+
+
+        These values represent standard tokenization approaches and popular pre-trained
+
+        tokenizers from the Hugging Face ecosystem.'
+      enum:
+      - Word
+      - Cl100kBase
+      - XlmRobertaBase
+      - BertBaseUncased
+    PipelineType:
+      type: string
+      enum:
+      - Azure
+      - Chunkr
+      deprecated: true
+    GenerationStrategy:
+      type: string
+      description: The strategy for generating the `content` field of a segment.
+      enum:
+      - LLM
+      - Auto
+      - Ignore
+    BoundingBox:
+      type: object
+      description: Bounding box for an item. It is used for segments and OCR results.
+      required:
+      - left
+      - top
+      - width
+      - height
+      properties:
+        height:
+          type: number
+          format: float
+          description: The height of the bounding box.
+        left:
+          type: number
+          format: float
+          description: The left coordinate of the bounding box.
+        top:
+          type: number
+          format: float
+          description: The top coordinate of the bounding box.
+        width:
+          type: number
+          format: float
+          description: The width of the bounding box.
+    ErrorHandlingStrategy:
+      type: string
+      description: 'Controls how errors are handled during processing:
+
+        - `Fail`: Stops processing and fails the task when any error occurs
+
+        - `Continue`: Attempts to continue processing despite non-critical errors (eg. LLM refusals etc.)'
+      enum:
+      - Fail
+      - Continue
+    SegmentProcessing:
+      type: object
+      description: 'Configuration for how each document segment is processed and formatted.
+
+
+        Each segment has sensible defaults, but you can override specific settings:
+
+        - `format`: Output as `Html` or `Markdown`
+
+        - `strategy`: `Auto` (rule-based), `LLM` (AI-generated), or `Ignore` (skip)
+
+        - `crop_image`: Whether to crop images to segment bounds
+
+        - `extended_context`: Use full page as context for LLM processing
+
+        - `description`: Generate descriptions for segments
+
+
+        **Defaults per segment type:** Check the documentation for more details.
+
+
+        Only specify the fields you want to change - everything else uses the defaults.'
+      properties:
+        Caption:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        Footnote:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        FormRegion:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+            description: New segment types - must be Optional for backwards compatibility.
+          default: null
+        Formula:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        GraphicalItem:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        Legend:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        LineNumber:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        ListItem:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        Page:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        PageFooter:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        PageHeader:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        PageNumber:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        Picture:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        Table:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        Text:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        Title:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+        Unknown:
+          oneOf:
+          - type: 'null'
+          - $ref: '#/components/schemas/GenerationConfig'
+          default: null
+    VersionInfo:
+      type: object
+      description: Version information for the task.
+      required:
+      - server_version
+      - client_version
+      properties:
+        client_version:
+          $ref: '#/components/schemas/ClientVersion'
+          description: The version of the client.
+        server_version:
+          type: string
+          description: The version of the server.
+    ChunkProcessing:
+      type: object
+      description: Controls the setting for the chunking and post-processing of each chunk.
+      properties:
+        ignore_headers_and_footers:
+          type:
+          - boolean
+          - 'null'
+          description: 'DEPRECATED: use `segment_processing.ignore` instead'
+          deprecated: true
+        target_length:
+          type: integer
+          format: int32
+          description: The target number of words in each chunk. If 0, each chunk will contain a single segment.
+          default: 4096
+          minimum: 0
+        tokenizer:
+          oneOf:
+          - $ref: '#/components/schemas/TokenizerType'
+            description: The tokenizer to use for the chunking process.
+          default: Word
+    ClientVersion:
+      oneOf:
+      - type: string
+        title: Legacy
+        description: Legacy SDK without version information (< 0.3.3)
+        enum:
+        - Legacy
+      - type: object
+        title: ManualSdk
+        description: Version of the current manually-maintained SDK
+        required:
+        - ManualSdk
+        properties:
+          ManualSdk:
+            type: string
+            description: Version of the current manually-maintained SDK
+      - type: object
+        title: GeneratedSdk
+        description: Version of the auto-generated SDK
+        required:
+        - GeneratedSdk
+        properties:
+          GeneratedSdk:
+            type: string
+            description: Version of the auto-generated SDK
+      - type: string
+        title: Unspecified
+        description: Unspecified/raw API request without any client version headers
+        enum:
+        - Unspecified
+      description: Represents different types of SDK clients and their versions
+    CroppingStrategy:
+      type: string
+      description: 'Controls the cropping strategy for an item (e.g. segment, chunk, etc.)
+
+        - `All` crops all images in the item
+
+        - `Auto` crops images only if required for post-processing'
+      enum:
+      - All
+      - Auto
+    FileInfo:
+      type: object
+      description: Information about the input file.
+      required:
+      - url
+      properties:
+        mime_type:
+          type:
+          - string
+          - 'null'
+          description: The MIME type of the file.
+        name:
+          type:
+          - string
+          - 'null'
+          description: The name of the file.
+        page_count:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: The number of pages in the file.
+          minimum: 0
+        ss_cell_count:
+          type:
+          - integer
+          - 'null'
+          format: int32
+          description: The number of cells in the file. Only used for spreadsheets.
+          minimum: 0
+        url:
+          type: string
+          description: The presigned URL/Base64 encoded URL of the input file.
+    Page:
+      type: object
+      required:
+      - image
+      - page_number
+      - page_height
+      - page_width
+      properties:
+        dpi:
+          type:
+          - number
+          - 'null'
+          format: float
+          description: DPI of the page/sheet. All cropped images are scaled to this DPI.
+        image:
+          type: string
+          description: The presigned URL of the page/sheet image.
+        page_height:
+          type: number
+          format: float
+          description: The number of pages in the file.
+        page_number:
+          type: integer
+          format: int32
+          description: The number of pages in the file.
+          minimum: 0
+        page_width:
+          type: number
+          format: float
+          description: The number of pages in the file.
+        ss_sheet_name:
+          type:
+          - string
+          - 'null'
+          description: The name of the sheet containing the page. Only used for Spreadsheets.
+    TaskType:
+      type: string
+      enum:
+      - Parse
+      - Extract
   securitySchemes:
-    apiKey:
+    api_key:
       type: apiKey
       in: header
       name: Authorization
-      description: 'API key issued from the Chunkr dashboard, sent as the raw value of the Authorization header (e.g. "Authorization: lu_...").'

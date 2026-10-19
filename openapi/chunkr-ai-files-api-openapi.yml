@@ -1,163 +1,422 @@
 openapi: 3.2.0
 info:
   title: Chunkr Files API
-  description: The Chunkr Cloud API turns complex documents (PDF, Office, images) into RAG- and LLM-ready data. It exposes asynchronous parse and extract tasks that run layout analysis, OCR, segmentation, and chunking, plus file management and utility endpoints. Tasks are created and then polled until they reach a terminal status. Authentication uses an API key passed in the Authorization header.
-  termsOfService: https://chunkr.ai/terms
+  description: API service for document layout analysis and chunking to convert document into RAG/LLM-ready data.
   contact:
-    name: Chunkr Support
+    name: Chunkr
     url: https://chunkr.ai
+    email: ishaan@lumina.sh
   license:
-    name: AGPL-3.0 (open-source release) / Commercial (Cloud)
-    url: https://github.com/lumina-ai-inc/chunkr/blob/main/LICENSE
-  version: '1.0'
+    name: ''
+  version: 2.66.2
 servers:
 - url: https://api.chunkr.ai
-  description: Chunkr Cloud API
-- url: https://localhost:8000
-  description: Self-hosted (Docker Compose) deployment
-security:
-- apiKey: []
+  description: Chunkr API
 tags:
 - name: Files
-  description: Upload and manage files referenced by tasks.
+  description: Endpoints for uploading and managing files
 paths:
   /files:
+    get:
+      tags:
+      - Files
+      summary: List Files
+      description: Lists files for the authenticated user with cursor-based pagination and optional filtering by date range.
+      operationId: list_files_route
+      parameters:
+      - name: limit
+        in: query
+        description: Number of files per page
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: cursor
+        in: query
+        description: Cursor for pagination (created_at)
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: start
+        in: query
+        description: Start date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: end
+        in: query
+        description: End date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: sort
+        in: query
+        description: 'Sort order: ''asc'' for ascending, ''desc'' for descending (default)'
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortOrder'
+      responses:
+        '200':
+          description: Paginated list of files
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilesResponse'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
     post:
-      operationId: uploadFile
       tags:
       - Files
       summary: Upload a file
-      description: Uploads a file that can later be referenced from a parse or extract task via a ch://files/{file_id} reference.
+      description: 'Accepts multipart/form-data with fields:
+
+        - file: binary (required)
+
+        - file_metadata: string (optional, JSON string)'
+      operationId: upload_file_route
       requestBody:
-        required: true
+        description: Multipart upload with file and optional metadata
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
+              $ref: '#/components/schemas/FileUploadForm'
+        required: true
       responses:
         '200':
-          description: File uploaded.
+          description: File uploaded successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/FileResponse'
-    get:
-      operationId: listFiles
-      tags:
-      - Files
-      summary: List files
-      description: Returns a paginated list of uploaded files.
-      parameters:
-      - name: page
-        in: query
-        schema:
-          type: integer
-          default: 1
-      - name: limit
-        in: query
-        schema:
-          type: integer
-          default: 10
-      responses:
-        '200':
-          description: A list of files.
+        '400':
+          description: Bad request
           content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FileResponse'
-  /files/{file_id}:
-    get:
-      operationId: getFile
-      tags:
-      - Files
-      summary: Get a file
-      parameters:
-      - $ref: '#/components/parameters/FileId'
-      responses:
-        '200':
-          description: The file record.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FileResponse'
-    delete:
-      operationId: deleteFile
-      tags:
-      - Files
-      summary: Delete a file
-      parameters:
-      - $ref: '#/components/parameters/FileId'
-      responses:
-        '200':
-          description: File deleted.
-  /files/{file_id}/download:
-    get:
-      operationId: downloadFileContent
-      tags:
-      - Files
-      summary: Download file content
-      parameters:
-      - $ref: '#/components/parameters/FileId'
-      responses:
-        '200':
-          description: The file content.
-          content:
-            application/octet-stream:
+            text/plain:
               schema:
                 type: string
-                format: binary
-  /files/{file_id}/url:
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
+  /files/{file_id}:
     get:
-      operationId: getFileUrl
       tags:
       - Files
-      summary: Get a file URL
-      description: Returns a presigned URL for the stored file.
+      summary: Get File
+      description: 'Returns metadata for a file owned by the authenticated user.
+
+        The response includes a permanent `ch://files/{file_id}` URL,
+
+        file name, content type, size, user-provided metadata, and timestamps.
+
+
+        If the file is not found or the user is not authorized, the response will be 401 Unauthorized.'
+      operationId: get_file_route
       parameters:
-      - $ref: '#/components/parameters/FileId'
+      - name: file_id
+        in: path
+        description: ID of the file
+        required: true
+        schema:
+          type: string
       responses:
         '200':
-          description: A presigned URL.
+          description: File metadata
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  url:
-                    type: string
+                $ref: '#/components/schemas/FileResponse'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: File not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
+    delete:
+      tags:
+      - Files
+      summary: Delete File
+      description: 'Delete file contents and scrub sensitive metadata.
+
+        Minimal metadata is retained for audit and usage reporting per ZDR policy'
+      operationId: delete_file_route
+      parameters:
+      - name: file_id
+        in: path
+        description: ID of the file
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Deletion result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: File not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
+  /files/{file_id}/content:
+    get:
+      tags:
+      - Files
+      summary: Download File Content
+      description: 'Streams the file bytes directly if authorized. The response will set the
+
+        `Content-Type` header to the file''s detected MIME type.'
+      operationId: get_file_content_route
+      parameters:
+      - name: file_id
+        in: path
+        description: ID of the file
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Raw file bytes
+          headers:
+            Content-Type:
+              schema:
+                type: string
+              description: MIME type of the returned file content
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: File not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
+  /files/{file_id}/url:
+    get:
+      tags:
+      - Files
+      summary: Get File URL
+      description: 'Returns a presigned download URL by default. If `base64_urls=true`, returns
+
+        base64-encoded file content. Control expiry with `expires_in` (seconds).'
+      operationId: get_file_url_route
+      parameters:
+      - name: file_id
+        in: path
+        description: ID of the file
+        required: true
+        schema:
+          type: string
+      - name: expires_in
+        in: query
+        description: Expiry in seconds for the presigned URL (default 3600)
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: base64_urls
+        in: query
+        description: If true, returns base64 data instead of a presigned URL
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Presigned URL or base64 data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUrlResponse'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: File not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+      security:
+      - api_key: []
 components:
-  parameters:
-    FileId:
-      name: file_id
-      in: path
-      required: true
-      description: The unique identifier of the file.
-      schema:
-        type: string
   schemas:
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+    FilesResponse:
+      type: object
+      required:
+      - files
+      - has_more
+      properties:
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileResponse'
+          description: List of files
+        has_more:
+          type: boolean
+          description: Whether there are more files to fetch
+        next_cursor:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Cursor for pagination (timestamp) e.g. 2025-01-01T00:00:00Z
+    FileUrlResponse:
+      type: object
+      required:
+      - url
+      properties:
+        expires_in:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          description: Expiry in seconds (omitted when base64)
+        url:
+          type: string
+          description: The presigned URL or base64 data (if base64_urls=true)
     FileResponse:
       type: object
+      description: 'Metadata describing an uploaded file in Chunkr.
+
+
+        Returned by POST `/files` and GET `/files/{file_id}`.'
+      required:
+      - file_id
+      - url
+      - file_name
+      - content_type
+      - file_size
+      - metadata
+      - created_at
       properties:
-        file_id:
+        content_type:
           type: string
-        file_name:
-          type: string
-        mime_type:
-          type: string
-        size:
-          type: integer
+          description: MIME type detected or provided for the file.
         created_at:
           type: string
           format: date-time
+          description: Timestamp when the file was created.
+        file_id:
+          type: string
+          description: Unique identifier for the file.
+        file_name:
+          type: string
+          description: The original filename supplied by the client.
+        file_size:
+          type: integer
+          format: int64
+          description: Size of the stored file in bytes.
+        metadata:
+          type: object
+          description: Arbitrary JSON metadata associated with the file.
+        url:
+          type: string
+          description: Permanent Chunkr URL. Use directly with other chunkr API requests.
+    FileUploadForm:
+      type: object
+      description: Form model for typed multipart extraction
+      required:
+      - file
+      properties:
+        file:
+          type: string
+          format: binary
+          description: The file to upload
+        file_metadata:
+          type:
+          - string
+          - 'null'
+          description: Arbitrary JSON metadata associated with the file.
+    DeleteResponse:
+      type: object
+      required:
+      - deleted
+      properties:
+        deleted:
+          type: boolean
+          description: Whether the file was deleted
   securitySchemes:
-    apiKey:
+    api_key:
       type: apiKey
       in: header
       name: Authorization
-      description: 'API key issued from the Chunkr dashboard, sent as the raw value of the Authorization header (e.g. "Authorization: lu_...").'

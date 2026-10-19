@@ -1,24 +1,27 @@
 {
   "provider": "chunkr-ai",
   "sources": [
-    "_original/chunkr-ai-openapi.yml"
+    "_original/chunkr-ai-openapi.json"
   ],
   "outputs": [
+    "chunkr-ai-chunkr-api-api-openapi.yml",
+    "chunkr-ai-extras-api-openapi.yml",
     "chunkr-ai-files-api-openapi.yml",
     "chunkr-ai-health-api-openapi.yml",
-    "chunkr-ai-tasks-api-openapi.yml"
+    "chunkr-ai-tasks-api-openapi.yml",
+    "chunkr-ai-webhook-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "chunkr-ai-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
-    "apis.yml register: already-registered"
+    "chunkr-ai-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "chunkr-ai-openapi.json: tagged webhooks POST task.extract.updated -> Chunkr API",
+    "chunkr-ai-openapi.json: tagged webhooks POST task.parse.updated -> Chunkr API",
+    "chunkr-ai-openapi.json: declared missing tag: Chunkr API",
+    "chunkr-ai-openapi.json: declared missing tag: Extras",
+    "apis.yml register: written (+3 apis, 6 total)"
   ],
-  "skipped": [
-    "chunkr-ai-files-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "chunkr-ai-health-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "chunkr-ai-tasks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
-  ]
+  "skipped": []
 }

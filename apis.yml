@@ -152,6 +152,36 @@ apis:
     url: https://docs.chunkr.ai/api-references/health/health-check
   - type: APIReference
     url: https://docs.chunkr.ai/api-references/health/health-check
+- aid: chunkr-ai:chunkr-ai-chunkr-api-api
+  name: Chunkr Chunkr API
+  description: The Chunkr API API from Chunkr — 0 operation(s) for chunkr api.
+  humanURL: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+  baseURL: https://api.chunkr.ai
+  tags:
+  - Chunkr API
+  properties:
+  - type: OpenAPI
+    url: openapi/chunkr-ai-chunkr-api-api-openapi.yml
+- aid: chunkr-ai:chunkr-ai-extras-api
+  name: Chunkr Extras API
+  description: The Extras API from Chunkr — 1 operation(s) for extras.
+  humanURL: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+  baseURL: https://api.chunkr.ai
+  tags:
+  - Extras
+  properties:
+  - type: OpenAPI
+    url: openapi/chunkr-ai-extras-api-openapi.yml
+- aid: chunkr-ai:chunkr-ai-webhook-api
+  name: Chunkr Webhook API
+  description: Endpoints for managing webhooks
+  humanURL: https://docs.chunkr.ai/api-references/tasks/create-parse-task
+  baseURL: https://api.chunkr.ai
+  tags:
+  - Webhook
+  properties:
+  - type: OpenAPI
+    url: openapi/chunkr-ai-webhook-api-openapi.yml
 common:
 - url: https://chunkr.ai/rss.xml
   type: BlogRSS

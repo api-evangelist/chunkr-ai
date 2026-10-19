@@ -1,0 +1,109 @@
+openapi: 3.2.0
+info:
+  title: Chunkr API
+  description: API service for document layout analysis and chunking to convert document into RAG/LLM-ready data.
+  contact:
+    name: Chunkr
+    url: https://chunkr.ai
+    email: ishaan@lumina.sh
+  license:
+    name: ''
+  version: 2.66.2
+servers:
+- url: https://api.chunkr.ai
+  description: Chunkr API
+tags:
+- name: Chunkr API
+paths: {}
+webhooks:
+  task.extract.updated:
+    post:
+      description: An extract task has been updated - the event is sent when the status or message for a task changes.
+      requestBody:
+        content:
+          application/json:
+            example:
+              event_type: task.extract.updated
+              message: null
+              status: Starting
+              task_id: ''
+            schema:
+              $ref: '#/components/schemas/TaskWebhookEvent'
+              example:
+                event_type: task.extract.updated
+                message: null
+                status: Starting
+                task_id: ''
+        description: An extract task has been updated - the event is sent when the status or message for a task changes.
+        required: true
+      summary: Task Extract Updated
+      tags:
+      - Chunkr API
+  task.parse.updated:
+    post:
+      description: A parse task has been updated - the event is sent when the status or message for a task changes.
+      requestBody:
+        content:
+          application/json:
+            example:
+              event_type: task.parse.updated
+              message: null
+              status: Starting
+              task_id: ''
+            schema:
+              $ref: '#/components/schemas/TaskWebhookEvent'
+              example:
+                event_type: task.parse.updated
+                message: null
+                status: Starting
+                task_id: ''
+        description: A parse task has been updated - the event is sent when the status or message for a task changes.
+        required: true
+      summary: Task Parse Updated
+      tags:
+      - Chunkr API
+components:
+  schemas:
+    WebhookEventType:
+      type: string
+      description: 'Webhook event types emitted to customers.
+
+        These map 1:1 to Svix Event Types and are referenced in the OpenAPI `webhooks` section.'
+      enum:
+      - task.parse.updated
+      - task.extract.updated
+    TaskWebhookEvent:
+      type: object
+      required:
+      - event_type
+      - task_id
+      - status
+      properties:
+        event_type:
+          $ref: '#/components/schemas/WebhookEventType'
+          description: Event type identifier
+        message:
+          type:
+          - string
+          - 'null'
+          description: Optional human-readable status message
+        status:
+          $ref: '#/components/schemas/Status'
+          description: Current status of the task
+        task_id:
+          type: string
+          description: Unique task identifier
+    Status:
+      type: string
+      description: The status of the task.
+      enum:
+      - Starting
+      - Processing
+      - Succeeded
+      - Failed
+      - Cancelled
+  securitySchemes:
+    api_key:
+      type: apiKey
+      in: header
+      name: Authorization

@@ -1,0 +1,85 @@
+openapi: 3.2.0
+info:
+  title: Chunkr Extras API
+  description: API service for document layout analysis and chunking to convert document into RAG/LLM-ready data.
+  contact:
+    name: Chunkr
+    url: https://chunkr.ai
+    email: ishaan@lumina.sh
+  license:
+    name: ''
+  version: 2.66.2
+servers:
+- url: https://api.chunkr.ai
+  description: Chunkr API
+tags:
+- name: Extras
+paths:
+  /file-types:
+    get:
+      tags:
+      - Extras
+      summary: Get all supported file types
+      description: 'Returns a list of all file types supported by Chunkr, grouped by category.
+
+        Each category contains a list of formats, where each format includes an extension
+
+        paired with its corresponding MIME type.'
+      operationId: get_supported_file_types
+      responses:
+        '200':
+          description: List of supported file types
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportedFileTypesResponse'
+components:
+  schemas:
+    FileTypeInfo:
+      type: object
+      description: Information about supported file formats in a category
+      required:
+      - formats
+      properties:
+        formats:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileTypeMapping'
+    FileTypeMapping:
+      type: object
+      description: A single file type with its extension and mime type
+      required:
+      - extension
+      - mime_type
+      properties:
+        extension:
+          type: string
+          description: The extension of the file type
+        mime_type:
+          type: string
+          description: The MIME type of the file type
+    SupportedFileTypesResponse:
+      type: object
+      description: All supported file types grouped by category
+      required:
+      - document
+      - spreadsheet
+      - presentation
+      - image
+      - text
+      properties:
+        document:
+          $ref: '#/components/schemas/FileTypeInfo'
+        image:
+          $ref: '#/components/schemas/FileTypeInfo'
+        presentation:
+          $ref: '#/components/schemas/FileTypeInfo'
+        spreadsheet:
+          $ref: '#/components/schemas/FileTypeInfo'
+        text:
+          $ref: '#/components/schemas/FileTypeInfo'
+  securitySchemes:
+    api_key:
+      type: apiKey
+      in: header
+      name: Authorization
