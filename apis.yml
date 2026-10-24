@@ -168,6 +168,8 @@ apis:
   humanURL: https://docs.chunkr.ai/api-references/tasks/create-parse-task
   baseURL: https://api.chunkr.ai
   tags:
+  - extras
+  tags_raw:
   - Extras
   properties:
   - type: OpenAPI
