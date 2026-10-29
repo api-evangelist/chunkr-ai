@@ -1,4 +1,4 @@
-# Chunkr (chunkr-ai)
+# Chunkr
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,139 +66,120 @@
 
 Chunkr is an open-source document intelligence platform that turns complex documents (PDF, Office, images) into RAG- and LLM-ready data. The Chunkr Cloud API at api.chunkr.ai performs layout analysis, OCR, segmentation, and chunking, and runs proprietary in-house vision models; the AGPL-3.0 open-source release (lumina-ai-inc/chunkr) can be self-hosted via Docker.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/chunkr-ai/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/chunkr-ai/refs/heads/main/apis.yml)
+**Areas:** Document Parsing · OCR · Chunking · RAG · Document Intelligence
 
-## Tags
+## Chunkr on APIs.io
 
-- Document Parsing
-- OCR
-- Chunking
-- RAG
-- Document Intelligence
+Everything profiled for Chunkr is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/chunkr-ai/](https://apis.io/providers/chunkr-ai/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (3)
 
-- **Created:** 2026-06-20
-- **Modified:** 2026-06-20
+- [Chunkr Files API](https://apis.io/apis/chunkr-ai/chunkr-ai-files-api/) — Upload and manage files referenced by tasks.
+- [Chunkr Health API](https://apis.io/apis/chunkr-ai/chunkr-ai-health-api/) — Liveness and metadata utilities.
+- [Chunkr Tasks API](https://apis.io/apis/chunkr-ai/chunkr-ai-tasks-api/) — Create, poll, list, cancel, and delete parse and extract tasks.
 
-## APIs
+### Published properties
 
-### Chunkr Parse Task API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-Creates a parse task that runs layout analysis, OCR, segmentation, and chunking over an uploaded document, returning structured chunks, pages, and segment metadata with configurable chunk_processing, segment_processing, ocr_strategy, and segmentation_strategy.
+#### Agentic access (1)
 
-- **Human URL:** [https://docs.chunkr.ai/api-references/tasks/create-parse-task](https://docs.chunkr.ai/api-references/tasks/create-parse-task)
-- **Base URL:** `https://api.chunkr.ai`
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Tags
+- [Chunkr Ai Agentic Access](https://apis.io/agentic-access/chunkr-ai/chunkr-ai-agentic-access/)
 
-- Parsing
-- Layout Analysis
-- Chunking
+#### Collections (4)
 
-#### Properties
+Postman and Open Collection request collections.
 
-- [Documentation](https://docs.chunkr.ai/pages/get-started/welcome)
-- [API Reference](https://docs.chunkr.ai/api-references/tasks/create-parse-task)
-- [OpenAPI](openapi/chunkr-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chunkr-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chunkr-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Chunkr API](https://apis.io/collections/chunkr-ai/open-chunkr-ai/)
+- [Chunkr Files API](https://apis.io/collections/chunkr-ai/open-chunkr-ai-files-api/)
+- [Chunkr Files Health API](https://apis.io/collections/chunkr-ai/open-chunkr-ai-health-api/)
+- [Chunkr Files Tasks API](https://apis.io/collections/chunkr-ai/open-chunkr-ai-tasks-api/)
 
-### Chunkr Extract Task API
+#### Security (3)
 
-Creates an extract task that pulls schema-driven structured data from a document, returning JSON output with citations and metrics against a caller-supplied extraction schema and optional system prompt.
+Authentication, trust centre, and vulnerability disclosure.
 
-- **Human URL:** [https://docs.chunkr.ai/api-references/tasks/create-extract-task](https://docs.chunkr.ai/api-references/tasks/create-extract-task)
-- **Base URL:** `https://api.chunkr.ai`
+- [Chunkr Ai Authentication](https://apis.io/security/chunkr-ai/chunkr-ai-authentication/)
+- [Chunkr Ai Domain Security](https://apis.io/security/chunkr-ai/chunkr-ai-domain-security/)
+- [Chunkr Ai Trust Center](https://apis.io/security/chunkr-ai/chunkr-ai-trust-center/)
 
-#### Tags
+#### Plans and pricing (1)
 
-- Extraction
-- Structured Output
-- Schema
+Published plans, tiers and prices.
 
-#### Properties
+- [Chunkr Ai Plans Pricing](https://apis.io/plans/chunkr-ai/chunkr-ai-plans-pricing/)
 
-- [Documentation](https://docs.chunkr.ai/api-references/tasks/create-extract-task)
-- [API Reference](https://docs.chunkr.ai/api-references/tasks/create-extract-task)
-- [OpenAPI](openapi/chunkr-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chunkr-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chunkr-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Rate limits (1)
 
-### Chunkr Task Management API
+Published request limits.
 
-Retrieves, lists, cancels, and deletes parse and extract tasks - get a task by id, get its parse or extract output, list tasks with pagination, cancel a running task, and delete a task and its artifacts.
+- [Chunkr Ai Rate Limits](https://apis.io/rate-limits/chunkr-ai/chunkr-ai-rate-limits/)
 
-- **Human URL:** [https://docs.chunkr.ai/api-references/tasks/get-task](https://docs.chunkr.ai/api-references/tasks/get-task)
-- **Base URL:** `https://api.chunkr.ai`
+#### FinOps (1)
 
-#### Tags
+What the API costs to run, by operation.
 
-- Tasks
-- Polling
-- Lifecycle
+- [Chunkr Ai Finops](https://apis.io/finops/chunkr-ai/chunkr-ai-finops/)
 
-#### Properties
+## Where to find this API
 
-- [Documentation](https://docs.chunkr.ai/api-references/tasks/get-task)
-- [API Reference](https://docs.chunkr.ai/api-references/tasks/get-task)
-- [OpenAPI](openapi/chunkr-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chunkr-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chunkr-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-### Chunkr Files API
-
-Uploads, lists, retrieves, downloads, and deletes files that can be referenced by parse and extract tasks via ch://files/{file_id} references.
-
-- **Human URL:** [https://docs.chunkr.ai/api-references/files/upload-a-file](https://docs.chunkr.ai/api-references/files/upload-a-file)
-- **Base URL:** `https://api.chunkr.ai`
-
-#### Tags
-
-- Files
-- Upload
-- Storage
-
-#### Properties
-
-- [Documentation](https://docs.chunkr.ai/api-references/files/upload-a-file)
-- [API Reference](https://docs.chunkr.ai/api-references/files/upload-a-file)
-- [OpenAPI](openapi/chunkr-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chunkr-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chunkr-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Chunkr Health and Extras API
-
-Liveness health check and metadata helpers, including listing all supported file types accepted by the parsing and extraction pipelines.
-
-- **Human URL:** [https://docs.chunkr.ai/api-references/health/health-check](https://docs.chunkr.ai/api-references/health/health-check)
-- **Base URL:** `https://api.chunkr.ai`
-
-#### Tags
-
-- Health
-- Utility
-- Metadata
-
-#### Properties
-
-- [Documentation](https://docs.chunkr.ai/api-references/health/health-check)
-- [API Reference](https://docs.chunkr.ai/api-references/health/health-check)
-- [OpenAPI](openapi/chunkr-ai-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/chunkr-ai.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/chunkr-ai.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [GitHub Organization](https://github.com/lumina-ai-inc)
-- [LinkedIn](https://www.linkedin.com/company/chunkr)
 - [Website](https://chunkr.ai)
 - [Documentation](https://docs.chunkr.ai)
-- [Plans](plans/chunkr-ai-plans-pricing.yml)
-- [Rate Limits](rate-limits/chunkr-ai-rate-limits.yml)
-- [Fin Ops](finops/chunkr-ai-finops.yml)
+- [GitHub](https://github.com/lumina-ai-inc)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 28.1** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 45.9 |
+| Contract governance | 0.0 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 29.8 |
+| Access clarity | 15.8 |
+
+**Agent readiness 22.1** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 16.7** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/chunkr-ai/](https://apis.io/providers/chunkr-ai/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Chunkr: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/chunkr-ai/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
